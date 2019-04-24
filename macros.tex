@@ -1,0 +1,93 @@
+\usepackage{ amssymb }
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+\newtheorem{observation}{Observation}
+
+\newcommand{\targ}{\vec{c}^*}
+\newcommand{\dist}{\mathcal{D}}
+
+%\newcommand{\genQ}{$q$}
+\newcommand{\oneposQ}{$1$Pos}
+\newcommand{\posQ}{Pos}
+\newcommand{\memQ}{\emph{Mem}}
+\newcommand{\subQ}{\emph{Sub}}
+\newcommand{\supQ}{\emph{Sup}}
+\newcommand{\eqQ}{\emph{EQ}}
+\newcommand{\pacQ}{\emph{EX}}
+
+%\newcommand{\genQi}[1]{$q_{#1}$}
+\newcommand{\oneposQi}[1]{$1$Pos_{#1}}
+\newcommand{\posQi}[1]{Pos_{#1}}
+\newcommand{\memQi}[1]{\emph{Mem}_{#1}}
+\newcommand{\subQi}[1]{\emph{Sub}_{#1}}
+\newcommand{\supQi}[1]{\emph{Sup}}
+\newcommand{\eqQi}[1]{\emph{EQ}_{#1}}
+\newcommand{\pacQi}[1]{\emph{EX}_{#1}}
+
+%\newcommand{\oneposQ}{$1$-pos}
+%\newcommand{\memQ}{\emph{Mem}}
+%\newcommand{\subQ}{\emph{Sub}}
+%\newcommand{\supQ}{\emph{Sup}}
+%\newcommand{\eqQ}{\emph{EQ}}
+%\newcommand{\pacQ}{\emph{PAC}}
+
+
+%Complexity of Queries
+\newcommand{\genC}{$\#q$}
+\newcommand{\oneposC}{\#$1$Pos}
+\newcommand{\posC}{\#Pos}
+\newcommand{\memC}{\#\emph{Mem}}
+\newcommand{\subC}{\#\emph{Sub}}
+\newcommand{\supC}{\#\emph{Sup}}
+\newcommand{\eqC}{\#\emph{EQ}}
+\newcommand{\pacC}{\#\emph{EX}}
+
+\newcommand{\genCi}[1]{\#q_{#1}}
+\newcommand{\oneposCi}[1]{\#$1$Pos_{#1}}
+\newcommand{\posCi}[1]{\#Pos_{#1}}
+\newcommand{\memCi}[1]{\#\emph{Mem}_{#1}}
+\newcommand{\subCi}[1]{\#\emph{Sub}_{#1}}
+\newcommand{\supCi}[1]{\#\emph{Sup}}
+\newcommand{\eqCi}[1]{\#\emph{EQ}_{#1}}
+\newcommand{\pacCi}[1]{\#\emph{EX}_{#1}}
+
+
+
+%EQ and Sub are Hard construction
+\newcommand{\ntreef}{\mathfrak{c}}
+\newcommand{\ntree}{\mathfrak{c}_{sub}}
+\newcommand{\eqhard}{\mathfrak{C}}
+
+
+
+
+%\newcommand{\xsubQ}{\emph{XSub}}
+%\newcommand{\xsupQ}{\emph{XSup}}
+%\newcommand{\xeqQ}{\emph{XEQ}}
+%\newcommand{\ressubQ}{\emph{resSub}}
+%\newcommand{\ressupQ}{\emph{resSup}}
+%\newcommand{\reseqQ}{\emph{resEQ}}
+
+
+
+
+\makeatletter
+\def\moverlay{\mathpalette\mov@rlay}
+\def\mov@rlay#1#2{\leavevmode\vtop{%
+   \baselineskip\z@skip \lineskiplimit-\maxdimen
+   \ialign{\hfil$\m@th#1##$\hfil\cr#2\crcr}}}
+\newcommand{\charfusion}[3][\mathord]{
+    #1{\ifx#1\mathop\vphantom{#2}\fi
+        \mathpalette\mov@rlay{#2\cr#3}
+      }
+    \ifx#1\mathop\expandafter\displaylimits\fi}
+\makeatother
+
+\newcommand{\cupdot}{\charfusion[\mathbin]{\cup}{\cdot}}
+\newcommand{\bigcupdot}{\charfusion[\mathop]{\bigcup}{\cdot}}
+
+
+
+\newcommand{\disClass}{C_{\cupdot}}
