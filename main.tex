@@ -42,7 +42,7 @@
 In the following proofs, we assume we are given concept classes $C_1, C_2, \dots, C_k$ defined over sets $X_1$, $X_2$, \dots, $X_k$. 
 Each $c_i$ in each $C_i$ is learnable from algorithm $A_i$ using queries to an oracle that can answer any queries in a set $Q$. 
 For each query $q \in Q$, we say algorithm $A_i$ makes $\#q_i(c)$ many $q$ queries to the oracle in order to learn concept $c$, dropping the index $i$ when necessary .
-For example, an algorithm $A$ might make $\memQ(c)$ membership queries to learn $c$. 
+For example, an algorithm $A$ might make $\memC(c)$ many membership queries to learn $c$. 
 
 Unless otherwise stated, we will assume any index $i$ or $j$ ranges over the set $\{ 1 \dots k \}$.
 We write $\prod S_i$ to refer to the cartesian-product of sets $S_i$. 
@@ -91,7 +91,7 @@ We will see later that this lower bound is tight when learning from membership q
 
 
 \begin{proposition}
-There exists a concept $C$ that is learnable from $O(\genC)$ queries posed to $Q \subset \{ \memQ, \eqQ, \subQ \}$ such that learning $C^k$ requires $O(\genC^k)$ queries.   
+There exists a concept $C$ that is learnable from $\genC$ many queries posed to $Q \subseteq \{ \memQ, \eqQ, \subQ \}$ such that learning $C^k$ requires $(\genC)^k$ many queries.   \todo{Should I explicitly handle infinite and finite cases separately? Should I include bigO notation on the infinite case?}
 \end{proposition}
 \begin{proof}
 Let $C = \{ \{j\} \mid j \in \{0 \dots m\} \}$. 
@@ -130,7 +130,7 @@ There must be at least one $x_i \not\in S_i$ (otherwise, $\vec{x}$ would be in $
 So the algorithm checks $x_j \in S_j$ for all $x_j$ until an $x_i \not\in S_i$ is found. 
 Since $\vec{x} \in \targ$, we know $x_i \in c_i^*$, so $x_i \in c_i^* \backslash S_i$, so the oracle can pass $x_i$ as a counterexample to $A_i$. 
 
-Note that once has output a correct hypothesis $c_i$, $S_i$ will always equal $c_i$, so counterexamples must be taken from some $j \ne i$. 
+Note that once $A_i$ has output a correct hypothesis $c_i$, $S_i$ will always equal $c_i$, so counterexamples must be taken from some $j \ne i$. 
 \end{proof}
 
 
@@ -179,7 +179,7 @@ Note that once has output a correct hypothesis $c_i$, $S_i$ will always equal $c
 
 
 
-
+\todo{combine learning algorithm for sub, mem, and eq w/ one positive query}
 \begin{proposition}
 If $Q = \{\memQ\}$ and a single positive example $\vec{p} \in \targ$ is given, then $\targ$ is learnable in $k \cdot \sum \memCi{i}(c^*_i)$ membership queries. 
 \end{proposition}
@@ -440,8 +440,8 @@ This implies that a subset query will return true if and only if the true concep
 Moreover, an adversarial oracle can always give a negative example for an equivalence query, meaning that oracle can give the same counterexample if a subset query were posed. 
 So we will show that $\eqhard$ is learnable from equivalence queries, implying that it is learnable from subset queries. 
 
-We we prove a lower-bound on learning $\prod \eqhard$ from subset queries from an adversarial oracle. 
-An adversarial equivalence query oracle can give the exact same answers and counterexamples, implying that  $\prod \eqhard$ is hard to learn from equivalence queries. 
+We we prove a lower-bound on learning $\eqhard^k$ from subset queries from an adversarial oracle. 
+An adversarial equivalence query oracle can give the exact same answers and counterexamples, implying that  $\eqhard^k$ is hard to learn from equivalence queries. 
 
 \begin{proposition}
 There exist algorithms for learning from equivalence queries or subset queries such that any concept $\ntreef(s) \in \eqhard$ can be learned from $|s|$ queries. 
@@ -477,6 +477,15 @@ Set $s = \lambda$\;
 \end{algorithm}
 
 
+\subsection{Showing $\eqhard^k$ is Hard to Learn}
+
+It is easy to learn $\eqhard$, since each new counterexample gives one more element in the target string $s$. 
+When learning a concept, $\prod \ntreef(s_i)$, it is not clear which dimension a given counterexample applies to. 
+Specifically A given counterexample $\vec{x}$ could have the property that $\vec{x}[i] \in \ntreef(s_i)$ for all $i \ne j$, but the learner cannot infer the value of this $j$. 
+It will then proceed considering all possible values of $j$, requiring exponentially more queries for longer $s_i$. \todo{is this clear?} 
+This subsection will formalize this notion to prove an exponential lower bound on learning $\eqhard^k$. 
+First, we need a couple definitions. 
+
 
 A concept $\prod \ntreef(s_i)$ is \emph{justifiable} if one of the following holds:
 \begin{itemize}
@@ -485,6 +494,8 @@ A concept $\prod \ntreef(s_i)$ is \emph{justifiable} if one of the following hol
 \end{itemize}
 
 A concept is \emph{justifiably queried} if it was queried to the oracle when it was justifiable. 
+\newline
+
 
 The adversarial oracle works as follows:
 \begin{itemize}
@@ -531,10 +542,10 @@ Thus there are $k^{r+1}$ justifiable concepts with sum of string lengths equal t
 \end{proof}
 
 \begin{theorem}
-Any algorithm learning from subset queries requires at least $k^r$ subset (or equivalence) queries to learn a concept $\prod \ntreef(s_i)$, whose sum of string lengths is $r$.
+Any algorithm learning $\eqhard^k$ from subset queries requires at least $k^r$ subset (or equivalence) queries to learn a concept $\prod \ntreef(s_i)$, whose sum of string lengths is $r$.
 \end{theorem}
 \begin{proof}
-Assume for contradiction that an algorithm can learn with less than $k^r$ queries and let this algorithm converge on some concept $c = \prod \ntreef(s_i)$ after less than $k^r$ queries. 
+Assume for contradiction that an algorithm can learn with less than $k^r$ queries and let this algorithm converge on some concept $c = \prod \ntreef(s_i)$ after less than $k^r$ queries. \todo{explain how to assume the oracle will never return "true" on a query.}
 %We will construct another concept $c' = \prod \ntreef(s'_i)$ that is consistent with all given oracle answers, but whose sum of string lengths is less than $r$.
 Since less than $k^r$ queries were made to learn $c$, by Proposition \ref{numjustconc}, there must be some justifiable concept $c' = \prod \ntreef(s'_i)$ with sum of string lengths less than or equal to $r$ that has not yet been queried.
 By proposition \ref{subjust} we can assume without loss of generality that for all $w_i \le s_i'$, $\prod \ntreef(w_i)$ has been queried to the oracle.
