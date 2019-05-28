@@ -1,19 +1,6 @@
-\documentclass[11pt]{amsart}
-\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
-\geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
-%\geometry{landscape}                % Activate for for rotated page geometry
-%\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
-\usepackage{graphicx}
-\usepackage{amssymb}
-\usepackage{epstopdf}
-\usepackage{algorithm2e}
-\usepackage{tabularx}
-\usepackage{todonotes}
-
-\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 \include{macros}
 
-\title{Learning Products of Learnable Sets}
+\title{Learning Cartesian-Products of Learnable Sets}
 \author{}
 %\date{}                                           % Activate to display a given date or no date
 
@@ -21,6 +8,47 @@
 \maketitle
 %\section{}
 %\subsection{}
+
+
+\section{Introduction}
+Traditional machine learning focuses on learning patterns from sets of (sometimes labelled) examples. 
+This is useful for learning approximations of concepts. % bad sentence
+However, for logical structures such as automata or propositional formulas, slight changes can result in very different behaviors. 
+It is not generally possible to exactly learn these structures from just labelled examples. 
+
+Therefore, researchers have introduced the active learning model, where the learner is allowed to make queries about the target concept to an oracle. 
+Using the correct set of oracles can result in the polynomial time learnability of otherwise unlearnable sets \cite{}
+
+Recently, exact active learning has been applied to formal synthesis, where a program is automatically generated to fit a high-level specification \cite{}. 
+This has been particularly useful in Counter-Example Guided Inductive Synthesis \cite{}
+
+
+
+
+
+\begin{figure}
+\begin{tikzpicture}
+     \coordinate (BL) at (0.5,0.5);
+     \coordinate (TR) at (2.5,2);
+      \draw[->] (-0.5,0) -- (3,0) node[right] {$speed$};
+      \draw[->] (0,-0.5) -- (0,3) node[above] {$brightness$};
+      \draw [draw=black] (BL) rectangle (TR);
+      \filldraw [fill=lightgray, draw=black] (BL) rectangle (TR);
+      \draw[dashed] (0,0.5) -- (BL);
+      \draw[dashed] (0,2) -- (0.5,2);
+      \draw[dashed] (0.5,0) -- (BL);
+      \draw[dashed] (2.5,0) -- (2.5,0.5);
+      \draw(.75,1) node[anchor = west]{\textbullet (s,b)};
+      \draw(1.25,2.5) node[anchor = west]{\textbullet (s',b')};
+      %\draw (1,1) node[draw=black, anchor=south] {.};
+      %\tkzDefPoint(1,1){A};
+      %\tkzLabelPoint[above](A){$(1,1)$};
+      
+\end{tikzpicture}
+\caption{The correct range of lighthouse behaviors.}
+\end{figure}
+
+
 
 \begin{table}
 \begin{center}
@@ -40,8 +68,9 @@
 \section{Important Notation}
 
 In the following proofs, we assume we are given concept classes $C_1, C_2, \dots, C_k$ defined over sets $X_1$, $X_2$, \dots, $X_k$. 
-Each $c_i$ in each $C_i$ is learnable from algorithm $A_i$ using queries to an oracle that can answer any queries in a set $Q$. 
-For each query $q \in Q$, we say algorithm $A_i$ makes $\#q_i(c)$ many $q$ queries to the oracle in order to learn concept $c$, dropping the index $i$ when necessary .
+Each $c_i$ in each $C_i$ is learnable from algorithm $A_i$ using queries to an oracle that can answer any queries in a set $Q$.  \todo{Q is almost always a singleton. Should we just call it a query instead of a set?}
+For each query $q \in Q$, we say algorithm $A_i$ makes $\genC(c)$ many $q$ queries to the oracle in order to learn concept $c$, dropping the index $i$ when necessary .
+We replace the term $\genC$ with a more specific term when the type of query is specified.
 For example, an algorithm $A$ might make $\memC(c)$ many membership queries to learn $c$. 
 
 Unless otherwise stated, we will assume any index $i$ or $j$ ranges over the set $\{ 1 \dots k \}$.
@@ -68,6 +97,8 @@ For sets $S_1, S_2, \dots, S_k$ and $T_1, T_2, \dots, T_k$, we have $\prod S_i \
 Fix sets $S_1, S_2, \dots, S_k$, points $x_1, x_2, \dots, x_k$ and an index $i$. 
 If $x_j \in S_j$ for all $j \ne i$, then $(x_1, x_2, \dots, x_k) \in \prod S_i$ if and only if $x_i \in S_i$.
 \end{observation}
+
+
 
 
 \section{Negative Results}
@@ -116,7 +147,7 @@ If $Q = \{ \supQ \}$, then there is an algorithm that learns any concept $\targ 
 \end{proposition}
 \begin{proof}
 Algorithm \ref{supalg} learns $\prod C_i $ by simulating the learning of each $A_i$ on its respective class $C_i$. 
-The algorithm asks each $A_i$ for subset queries $S_i$, queries the product $\prod S_i$ to the oracle, and then uses the answer to answer at least one query to some $A_i$. 
+The algorithm asks each $A_i$ for superset queries $S_i$, queries the product $\prod S_i$ to the oracle, and then uses the answer to answer at least one query to some $A_i$. 
 Since at least one $A_i$ receives an answer for each oracle query, at most $\sum \supCi{i}(c^*_i)$ queries must be made in total. 
 
  
@@ -215,38 +246,71 @@ Get positive example $\vec{p}$\;
 
 
 
-\begin{algorithm}[H]
-\label{linsubalg}
-\SetAlgoLined
-\KwResult{Learn $\prod C_i $ from Subset Queries, Membership Queries, and One Positive Example}
-\For{$i = 1 \dots k$}{
-	Set $S_i$ to initial subset query from $A_i$
-}
- \While{Some $A_i$ has not completed}{
-  Query $\prod S_i \subseteq \targ$ to oracle\;
-  \eIf{$\prod S_i \subseteq \targ$}{
-  	 Answer $S_i \subseteq c_i^*$ to each $A_i$\;
- 	 Update each $S_i$ to new query from $A_i$\;
-	}{
- 		Get counterexample $\vec{x} = (x_1,\dots,x_k)$\;
-		\For{i = 1 \dots k}{
-			Query $\vec{p}[i \leftarrow x_i] \in \targ$\;
-			\If{$\vec{p}[i \leftarrow x_i] \not\in \targ$ and $x_i \in S_i$}{
-				Pass counterexample $x_i$ to $A_i$\;
-				Update $S_i$ to new query from $A_i$\;
-			}
-		}
-	
-	}
-	\For{i = 1 \dots k}{
-		\If{$A_i$ outputs $c_i$}{
-			Set $S_i := c_i$\;
-		}
-	}
-}
-\Return{$\prod c_i$} \;
-\caption{Algorithm for learning from Subset Queries, Membership Queries, and One Positive Example}
-\end{algorithm}
+%\begin{algorithm}[H]
+%\label{linsubalg}
+%\SetAlgoLined
+%\KwResult{Learn $\prod C_i $ from Subset Queries, Membership Queries, and One Positive Example}
+%\For{$i = 1 \dots k$}{
+%	Set $S_i$ to initial subset query from $A_i$
+%}
+% \While{Some $A_i$ has not completed}{
+%  Query $\prod S_i \subseteq \targ$ to oracle\;
+%  \eIf{$\prod S_i \subseteq \targ$}{
+%  	 Answer $S_i \subseteq c_i^*$ to each $A_i$\;
+% 	 Update each $S_i$ to new query from $A_i$\;
+%	}{
+% 		Get counterexample $\vec{x} = (x_1,\dots,x_k)$\;
+%		\For{i = 1 \dots k}{
+%			Query $\vec{p}[i \leftarrow x_i] \in \targ$\;
+%			\If{$\vec{p}[i \leftarrow x_i] \not\in \targ$ and $x_i \in S_i$}{
+%				Pass counterexample $x_i$ to $A_i$\;
+%				Update $S_i$ to new query from $A_i$\;
+%			}
+%		}
+%	
+%	}
+%	\For{i = 1 \dots k}{
+%		\If{$A_i$ outputs $c_i$}{
+%			Set $S_i := c_i$\;
+%		}
+%	}
+%}
+%\Return{$\prod c_i$} \;
+%\caption{Algorithm for learning from Subset Queries, Membership Queries, and One Positive Example}
+%\end{algorithm}
+%
+%\begin{algorithm}[H]
+%\label{lineqalg}
+%\SetAlgoLined
+%\KwResult{Learn $\prod C_i $ from Equivalence Queries, Membership Queries, and One Positive Example}
+%\For{$i = 1 \dots k$}{
+%	Set $S_i$ to initial equivalence query from $A_i$
+%}
+%  Query $\prod S_i = \targ?$ to oracle\;
+%  \eIf{$\prod S_i = \targ$ }{
+%	\Return{$\prod S_i$}	\;
+%   }{
+% 	Get counterexample $\vec{x} = (x_1,\dots,x_k)$\;
+%	\eIf{$\vec{x} \in \targ \backslash \prod S_i$}{
+%		\For{i = 1 \dots k}{
+%   			\If{$x_i \not\in S_i$}{
+%			Pass counterexample $x_i$ to $A_i$\;
+%			Update $S_i$ to new query from $A_i$\;
+%			}
+%  		}
+% 	}{
+%		\For{i = 1 \dots k}{
+%			Query $\vec{p}[i \leftarrow x_i] \in \targ$\;
+%			\If{$\vec{p}[i \leftarrow x_i] \not\in \targ$ and $x_i \in S_i$}{
+%				Pass counterexample $x_i$ to $A_i$\;
+%				Update $S_i$ to new query from $A_i$\;
+%			}
+%		}
+%	
+%	}
+%}
+%\caption{Algorithm for learning from Equivalence Queries, Membership Queries, and One Positive Example}
+%\end{algorithm}
 
 \begin{proposition}
 If $Q = \{\subQ\}$ and a single positive example $\vec{p} \in \targ$ is given, then $\targ$ is learnable in $\sum \subCi{i}(c^*_i)$ subset queries and $k \cdot \sum \subCi{i}(c^*_i)$ membership queries. 
@@ -266,16 +330,16 @@ Each subset query results in a correct answer being given to at least one learne
 \begin{algorithm}[H]
 \label{lineqalg}
 \SetAlgoLined
-\KwResult{Learn $\prod C_i $ from Equivalence Queries, Membership Queries, and One Positive Example}
+\KwResult{Learn $\prod C_i $ from Equivalence (or Subset) Queries, Membership Queries, and One Positive Example}
 \For{$i = 1 \dots k$}{
 	Set $S_i$ to initial equivalence query from $A_i$
 }
-  Query $\prod S_i = \targ?$ to oracle\;
-  \eIf{$\prod S_i = \targ$ }{
+  Query $\prod S_i$ to oracle\;
+  \eIf{$Q = \{\eqQ\}$ and $\prod S_i = \targ$ }{
 	\Return{$\prod S_i$}	\;
    }{
  	Get counterexample $\vec{x} = (x_1,\dots,x_k)$\;
-	\eIf{$\vec{x} \in \targ \backslash \prod S_i$}{
+	\eIf{$Q = \{\eqQ\}$ and $\vec{x} \in \targ \backslash \prod S_i$}{
 		\For{i = 1 \dots k}{
    			\If{$x_i \not\in S_i$}{
 			Pass counterexample $x_i$ to $A_i$\;
@@ -293,7 +357,7 @@ Each subset query results in a correct answer being given to at least one learne
 	
 	}
 }
-\caption{Algorithm for learning from Equivalence Queries, Membership Queries, and One Positive Example}
+\caption{Algorithm for learning from Equivalence (or Subset)  Queries, Membership Queries, and One Positive Example}
 \end{algorithm}
 
 
@@ -542,7 +606,8 @@ Thus there are $k^{r+1}$ justifiable concepts with sum of string lengths equal t
 \end{proof}
 
 \begin{theorem}
-Any algorithm learning $\eqhard^k$ from subset queries requires at least $k^r$ subset (or equivalence) queries to learn a concept $\prod \ntreef(s_i)$, whose sum of string lengths is $r$.
+Any algorithm learning $\eqhard^k$ from subset (or equivalence) queries requires at least $k^r$ queries to learn a concept $\prod \ntreef(s_i)$, whose sum of string lengths is $r$.
+Equivalently, the algorithm takes $k^{\sum \genCi{i}}$ subset (or equivalence) queries.
 \end{theorem}
 \begin{proof}
 Assume for contradiction that an algorithm can learn with less than $k^r$ queries and let this algorithm converge on some concept $c = \prod \ntreef(s_i)$ after less than $k^r$ queries. \todo{explain how to assume the oracle will never return "true" on a query.}
@@ -556,5 +621,108 @@ Otherwise, there is an $i$ such that $v_i \not\le s'_i$.
 So $\{v_i\} \times \mathbb{N}  \cap \ntreef(s'_i) = \emptyset$, so $\vec{x}$ is a valid counterexample. 
 Therefore, all counterexamples are consistent with $c'$ being correct concept, contradicting the claim that the learner has learned $c$. 
 \end{proof}
+
+
+
+
+
+
+\tikzset{
+  treenode/.style = {align=center, inner sep=0pt, text centered,
+    font=\sffamily},
+    cnode/.style = {treenode, circle, black, font=\sffamily\bfseries, draw=black, text width=2.2em},
+    elip/.style = {treenode,  draw=none, black, font=\sffamily\bfseries,  text width=2em},
+    edge_style/.style={draw=black}
+%  arn_n/.style = {treenode, circle, white, font=\sffamily\bfseries, draw=black,
+%    fill=black, text width=1.5em},% arbre rouge noir, noeud noir
+%  arn_r/.style = {treenode, circle, red, draw=red, 
+%    text width=1.5em, very thick},% arbre rouge noir, noeud rouge
+%  arn_x/.style = {treenode, rectangle, draw=black,
+%    minimum width=0.5em, minimum height=0.5em}% arbre rouge noir, nil
+}
+
+\begin{tikzpicture}[->,>=stealth',level/.style={sibling distance = 5cm/#1,
+  level distance = 1.5cm}] 
+\node[cnode] at (0, 0)   (lam) {$\ntreef(\lambda)$};
+\node[cnode] at (-2, -2)   (1) {$\ntreef(1)$};
+\node[cnode] at (0, -2)   (2) {$\ntreef(2)$};
+\node[elip] at (3, -2)   (elp1) {$...$};
+\node[cnode] at (-3.5, -4)   (11) {$\ntreef(11)$};
+\node[cnode] at (-2, -4)   (12) {$\ntreef(12)$};
+\node[elip] at (1, -4)   (elp2) {$...$};
+
+ \draw[edge_style]  (lam) edge node[above left]{$(\lambda,1)$} (1);
+ \draw[edge_style]  (lam) edge node[right]{$(\lambda,2)$} (2);
+ \draw[edge_style]  (lam) edge (elp1);
+ \draw[edge_style]  (1) edge node[above left]{$(1,1)$} (11);
+ \draw[edge_style]  (1) edge node[right]{$(1,2)$} (12);
+ \draw[edge_style]  (1) edge (elp2);
+
+%\node [cnode] {}
+%    child{ node [cnode] {$\ntreef(1)$}
+%            child{ node [cnode] {$\ntreef(11)$} edge from parent node[above left] {$(1, 1)$}}
+%            child{ node [cnode] {$\ntreef(12)$} edge from parent node[above right] {$(1, 2)$}}
+%              edge from parent node[above left] {$(\lambda, 1)$}                             
+%    }
+%    child { node [cnode] {$\ntreef(2)$} edge from parent node[above left] {$(\lambda, 2)$}}
+%    child { node [cnode] {$\ntreef(2)$} }
+%; 
+\end{tikzpicture}
+
+
+
+%\begin{center}
+%\begin{tabular}{ |c|c|c|c|c|c|c|c| } 
+%Queries allowed & Complexity\\ Measured & \posQ & \supQ & \memQ & \subQ & \eqQ \\
+%\hline
+%Q & \genC & Not Possible & $\sum \supCi{i}$ & $(max_i\{\memCi{i}\})^k$ & $k^{\sum \subCi{i}}$ & $k^{\sum \eqCi{i}}$\\
+%\multirow{2}{4em}{$Q \cup \{\memQ, \oneposQ\}$} & \memC & Not Possible & $0$ & same as below& $k \sum \subCi{i}$ & $k \sum \eqCi{i}$\\
+%\genC & Not Possible & $\sum \supCi{i}$ & $\sum \memCi{i}$ & $\sum \subCi{i}$ & $\sum \eqCi{i}$\\
+%\hline
+%\end{tabular}
+%\end{center}
+
+\begin{figure}
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{ |c|c|c|c| } 
+\cline{2-4}
+\multicolumn{1}{c|}{} & Only $Q$ & \multicolumn{2}{c|}{$Q$ with $\memQ$ and $\oneposQ$} \\
+\multicolumn{1}{c|}{} & \genC & \memC & \genC \\
+\hline
+\posQ & Not Possible  & Not Possible & Not Possible \\
+\hline
+\supQ & $\sum \supCi{i}$ & $0$ & $\sum \supCi{i}$\\
+\hline
+\memQ & $(max_i\{\memCi{i}\})^k$ & $\sum \memCi{i}$ & $\sum \memCi{i}$ \\
+\hline
+\subQ & $k^{\sum \subCi{i}}$ & $k \sum \subCi{i}$  & $\sum \subCi{i}$ \\
+\hline
+\eqQ  &$k^{\sum \eqCi{i}}$ &  $k \sum \eqCi{i}$ &  $\sum \eqCi{i}$\\
+\hline
+\end{tabular}
+\renewcommand{\arraystretch}{1}
+\end{center}
+\caption{
+Final collection of runtimes. 
+The rows represents the set $Q$ of queries needed to learn each $C_i$.  
+The columns determine whether the cross product is learned from queries in just $Q$ or $Q \cup \{\memQ, \oneposQ\}$. 
+In the latter case, the column is separated to track the number of membership queries and queries in $Q$ that are needed.
+}
+\end{figure}
+
+%\begin{center}
+%\begin{tabular}{ |c|c|c|c| } 
+%\hline
+%col1 & col2 & col3 \\
+%\hline
+%\multirow{3}{4em}{Multiple row} & cell2 & cell3 \\ 
+%& cell5 & cell6 \\ 
+%\cline{2-3} & cell8 & cell9 \\ 
+%\hline
+%\end{tabular}
+%\end{center}
+
+
 
 \end{document}  
