@@ -1,0 +1,24 @@
+In the following proofs, we assume we are given concept classes $C_1, C_2, \dots, C_k$ defined over sets $X_1$, $X_2$, \dots, $X_k$. 
+Each $c_i$ in each $C_i$ is learnable from algorithm $A_i$ using queries to an oracle that can answer any queries in a set $Q$.  \todo{Q is almost always a singleton. Should we just call it a query instead of a set?}
+For each query $q \in Q$, we say algorithm $A_i$ makes $\genCi{i}$ many $\genQ$ queries to the oracle in order to learn concept $c_i$, dropping the index $i$ when necessary .
+We replace the term $\genC$ with a more specific term when the type of query is specified.
+For example, an algorithm $A$ might make $\memC$ many membership queries to learn $c$. 
+
+Unless otherwise stated, we will assume any index $i$ or $j$ ranges over the set $\{ 1 \dots k \}$.
+We write $\prod S_i$ to refer to the cartesian-product (i.e., cross-product) of sets $S_i$. 
+Note that this is the $k$-ary cartesian product, and is not simply repeated applications of the binary cartesian product.
+So for example $\prod_{i=1}^3 S_i$ equals $\{ (s_1, s_2, s_3) \mid s_1 \in S_1, s_2 \in S_2, s_3 \in S_3 \}$ and not $\{ ((s_1, s_2), s_3) \mid s_1 \in S_1, s_2 \in S_2, s_3 \in S_3 \}$
+We use $S^k$ to refer to $\prod_{i=1}^k S$. 
+
+We use vector notation $\vec{x}$ to refer to a vector of elements $(x_1,\dots, x_k)$, $\vec{x}[i]$ to refer to $x_i$, and $\vec{x}[i \leftarrow x'_i]$ to refer to $\vec{x}$ with $x'_i$ replacing value $x_i$ at position $i$. 
+We define $\prod C_i := \{ \prod c_i \mid c_i \in C_i, i \in \{1,\dots,k\} \}$. 
+We write $\vec{c}$ for any element of $\prod C_i $ and will often denote $\vec{c}$ by $(c_1, \dots, c_k)$ in place of $\prod c_i$. 
+
+The results below answer the following question:
+For what set of queries $Q$ does the learnability of each $C_i$ imply the learnability of $\prod C_i $ and how does the number of queries to learn $\prod C_i $ increase as a function of each $\genCi{i}$ for each $q \in Q$?
+
+The proofs in this paper make use of the following simple observation:
+\begin{observation}
+\label{subobs}
+For sets $S_1, S_2, \dots, S_k$ and $T_1, T_2, \dots, T_k$, we have $\prod S_i \subseteq \prod T_i$ if and only if $S_i \subseteq T_i$ for all $i$ or $\prod S_i = \emptyset$.
+\end{observation}

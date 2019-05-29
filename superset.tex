@@ -1,0 +1,64 @@
+\begin{proposition}
+%Assume for each concept class $C_i$ there is a learning algorithm $A_i$ that learns each $c_i \in C_i$ in $$ superset queries (we don't assume $Q_i(c_i)$ is finite for all $c_i$). 
+
+If $Q = \{ \supQ \}$, then there is an algorithm that learns any concept $\targ = c^*_1 \times \dots \times c^*_k  \in \prod C_i $ in $\sum \supCi{i}(c^*_i)$ queries.  
+\end{proposition}
+\begin{proof}
+Algorithm \ref{supalg} learns $\prod C_i $ by simulating the learning of each $A_i$ on its respective class $C_i$. 
+The algorithm asks each $A_i$ for superset queries $S_i$, queries the product $\prod S_i$ to the oracle, and then uses the answer to answer at least one query to some $A_i$. 
+Since at least one $A_i$ receives an answer for each oracle query, at most $\sum \supCi{i}(c^*_i)$ queries must be made in total. 
+
+ 
+
+We will now show that each oracle query results in at least one answer to an $A_i$ query (and that the answer is correct). 
+The oracle first checks if the target concept is empty, if not it proceeds as normal.
+At each step, the algorithm poses query $\prod S_i$ to the oracle. 
+If the oracle returns 'yes' (meaning $\prod S_i \supseteq \targ$), then  $S_i \supseteq c_i^*$ for each $i$ by Observation \ref{subobs}, so the oracle answers 'yes' to each $A_i$. 
+If the oracle returns 'no', it will give a counterexample $\vec{x} = (x_1,\dots,x_k) \in \targ \backslash \prod S_i$. 
+There must be at least one $x_i \not\in S_i$ (otherwise, $\vec{x}$ would be in $\prod S_i$). 
+So the algorithm checks $x_j \in S_j$ for all $x_j$ until an $x_i \not\in S_i$ is found. 
+Since $\vec{x} \in \targ$, we know $x_i \in c_i^*$, so $x_i \in c_i^* \backslash S_i$, so the oracle can pass $x_i$ as a counterexample to $A_i$. 
+
+Note that once $A_i$ has output a correct hypothesis $c_i$, $S_i$ will always equal $c_i$, so counterexamples must be taken from some $j \ne i$. 
+\end{proof}
+
+
+
+
+
+\begin{algorithm}[H]
+\label{supalg}
+\SetAlgoLined
+\KwResult{Learn $\prod C_i $ from Superset Queries}
+\If{$\emptyset \in C_i$ for some $i$}{
+	Query $\emptyset \supseteq \targ$\;
+	\If{$\emptyset \supseteq \targ$}{
+		\Return{$\emptyset$}
+	}
+}
+\For{$i = 1 \dots k$}{
+	Set $S_i$ to initial subset query from $A_i$
+}
+ \While{Some $A_i$ has not completed}{
+  Query $\prod S_i$ to oracle\;
+  \eIf{$\prod S_i \supseteq c^*$ }{
+   Answer $S_i \supseteq c_i^*$ to each $A_i$\;
+   Update each $S_i$ to new query\;
+   }{
+ 	Get counterexample $\vec{x} = (x_1,\dots,x_k)$
+   	\For{i = 1 \dots k}{
+   		\If{$x_i \not\in S_i$}{
+			Pass counterexample $x_i$ to $A_i$\;
+			Update $S_i$ to new query\;
+			} 
+  		}
+ 	}
+	\For{i = 1 \dots k}{
+		\If{$A_i$ outputs $c_i$}{
+			Set $S_i := c_i$\;
+		}
+	}
+ }
+ \Return{$\prod c_i$}\;
+ \caption{Algorithm for learning from Subset Queries}
+\end{algorithm}

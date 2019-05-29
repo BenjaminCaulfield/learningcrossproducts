@@ -1,0 +1,70 @@
+We have seen that learning with membership queries can be made significantly easier if a single positive example is given. 
+In this section we describe a learning algorithm using membership queries when no positive example is given. 
+This algorithm makes $O(max_i \{ \memCi{i}(c_i) \}^k)$ queries, matching the lower bound given in a previous section. 
+
+For this algorithm to work, we need to assume that $\emptyset \not\in C_i$ for all $i$.
+If not, there is no way to distinguish between an empty and non-empty concept. 
+For example consider the classes $C_1 = \{ \{1\}, \emptyset \}$ and $C_2 = \{ \{j \} \mid j \in \mathbb{N} \}$. 
+It is easy to know when we have learned the correct class in $C_1$ or in $C_2$ using membership queries. 
+However, for any finite number of membership queries, there is no way to distinguish between the sets $\emptyset$ and $\{(1,j)\}$ for some $j$ that has yet to be queried.
+
+
+The main idea behind this algorithm is that learning from membership queries is easy once a single positive example is found. 
+So the algorithm runs until a positive example is found from each concept or until all concepts are learned. 
+If a positive example is found, the learner can then run Algorithm \ref{lineqalg} for learning from membership queries and a single positive example. 
+
+
+\begin{proposition}
+Algorithm \ref{memonlyalg} will terminate after making $O(max_i \{ \memCi{i}(c_i) \}^k)$ queries.
+\end{proposition}
+\begin{proof}
+The algorithm works by constructing sets $S_i$ of elements and querying all possible elements of $\prod S_i$. 
+We will get our bound of $O(max_i \{ \memCi{i}(c_i) \}^k)$ by showing the algorithm will find a positive example once $| S_i | > max_i \{ \memCi{i}(c_i) \}$ for all $i$. 
+Since the algorithm queries all possible elements of $\prod S_i$, it is sufficient to prove that $S_i$ will contain an element of $c_i$ once $|S_i| > \memCi{i}(c_i)$. 
+
+Assume that each learner eventually terminates. 
+%This means that for any $c_i$ in any $C_i$, either $A_i$ eventually queries a point $x \in c_i$ or the learner outputs $c_i$ after finitely many negative membership queries. 
+Let $\vec{q}^i = q_1^i, q_2^i, \dots$ be the membership queries $A_i$ makes assuming it only receives negative answers from an oracle. 
+If $\vec{q}^i$ is finite, then there is some set $N_i \in C_i$ that $A_i$ outputs after querying all points in $\vec{q}^i$ (and receiving negative answers). 
+If $N_i$ is non-empty let $n_i$ be some element in $N_i$. 
+Note that although sampling elements from a set might be expensive in general, this is only done for $N_i$ and can therefore be hard-coded into the learning algorithm. 
+If $c_i = N_i$, then by our assumption that $\targ \ne \emptyset$, $N_i$ contains some $n_i$. 
+So $S_i$ contains an element of $c_i$ at the start of the algorithm. 
+If $c_i \ne N_i$, by our assumption that $A_i$ eventually terminates, $A_i$ must eventually query some $q_j^i \in c_i$. 
+So after $j$ steps, $S_i$ contains some element of $c_i$.
+Since $j < \memCi{i}(c_i)$, we have that $S_i$ contains a positive example once $| S_i | > \memCi{i}(c_i)$, completing the proof.  
+\end{proof}
+
+
+
+
+
+
+\begin{algorithm}[H]
+\label{memonlyalg}
+\SetAlgoLined
+\KwResult{Learning with Membership Queries Only}
+\For{$i = 1 \dots k$}{
+	\eIf{$N_i$ and $n_i$ exist}{
+		Set $S_i := \{n_i\}$\;
+	}{
+		Set $S_i := \{ \}$\; 
+	}
+}
+Set $j = 0$\;
+\While{True}{
+	\For{i = \{1, \dots, k\}}{
+		\If{ $|\vec{q}^i| \ge j$ }{
+			$S_i := S_i \cup \{q_j^i\}$\;
+		}
+	}
+  \For{$\vec{x} \in \prod S_i$}{
+  	Query $\vec{x} \in \targ$\;
+	\If{$\vec{x} \in \targ$}{
+		Run Algorithm \ref{linmemalg} using $\vec{x}$ as a positive example\;	
+	}
+  }
+  $j := j+1$\;
+}
+\caption{Algorithm for Learning from Membership Queries Only}
+\end{algorithm}

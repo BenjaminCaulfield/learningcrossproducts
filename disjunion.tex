@@ -1,0 +1,39 @@
+\section{Disjoint Union}
+This section discusses learning disjoint unions of concept classes. 
+This is generally much easier than learning cross-products of classes, since counterexamples belong to a single dimension in the disjoint union. 
+This problem uses the same notation as the cross-product case, but we denote the disjoint union of two sets as $A \cupdot B$ and the disjoint union of many sets as $\bigcupdot A_i$.  
+We define the concept class of disjoint unions as $\disClass := \{ \bigcupdot c_i \mid c_i \in C_i  \}$. 
+
+The algorithm for learning from membership queries is very easy and won't be stated here. 
+Algorithm \ref{disjalg} shows the learning procedure for when $Q \in \{ \{\subQ\}, \{\supQ\}, \{\eqQ\}\}$.
+The correctness of this algorithm follows from the following simple facts.
+Assume we have sets $S_1,\dots,S_k$ and $T_1,\dots,T_k$.
+Then $\bigcupdot S_i \subseteq \bigcupdot T_i$ if and only $S_i \subseteq T_i$ for all $i$.
+Likewise $\bigcupdot S_i = \bigcupdot T_i$ if and only if $S_i = T_i$ for all $i$.
+
+
+
+\begin{algorithm}[H]
+\label{disjalg}
+\SetAlgoLined
+\KwResult{Learning Disjoint Unions}
+\For{$i = 1 \dots k$}{
+	Set $S_i$ to initial query from $A_i$
+}
+\While{Some $A_i$ has not terminated}{
+  Query $\bigcupdot S_i$ to oracle\;
+  \eIf{Oracle returns `yes' }{
+	Pass 'yes' to each $A_i$\;
+   	Get updated $S_i$ from each $A_i$\; 
+   }{
+ 	Get counterexample $x_i \in X_i$ for some $i$\;
+	Pass $x_i$ as counterexample to $A_i$\;
+	Get updated $S_i$ from each $A_i$\; 
+	}
+}
+\Return{$\bigcupdot S_i$}\;
+\caption{Learning Disjoint Unions}
+\end{algorithm}
+
+
+

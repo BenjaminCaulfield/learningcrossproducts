@@ -1,0 +1,33 @@
+The final collection of query complexities is given in Figure \ref{complexitytable}.
+All of the bounds are tight, except for learning with superset queries, membership queries, and one positive example.  
+
+\begin{figure}
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{ |c|c|c|c| } 
+\cline{2-4}
+\multicolumn{1}{c|}{} & Only $Q$ & \multicolumn{2}{c|}{$Q$ with $\memQ$ and $\oneposQ$} \\
+\cline{1-1}
+\multicolumn{1}{|c|}{$Q \downarrow$} & \genC & \memC & \genC \\
+\hline
+\posQ & Not Possible  & Not Possible & Not Possible \\
+\hline
+\supQ & $\sum \supCi{i}$ & $0$ & $\sum \supCi{i}$\\
+\hline
+\memQ & $(max_i\{\memCi{i}\})^k$ & $\sum \memCi{i}$ & $\sum \memCi{i}$ \\
+\hline
+\subQ & $k^{\sum \subCi{i}}$ & $k \sum \subCi{i}$  & $\sum \subCi{i}$ \\
+\hline
+\eqQ  &$k^{\sum \eqCi{i}}$ &  $k \sum \eqCi{i}$ &  $\sum \eqCi{i}$\\
+\hline
+\end{tabular}
+\renewcommand{\arraystretch}{1}
+\end{center}
+\caption{
+Final collection of query complexities. 
+The rows represents the set $Q$ of queries needed to learn each $C_i$.  
+The columns determine whether the cross product is learned from queries in just $Q$ or $Q \cup \{\memQ, \oneposQ\}$. 
+In the latter case, the column is separated to track the number of membership queries and queries in $Q$ that are needed.
+ }
+ \label{complexitytable}
+\end{figure}
