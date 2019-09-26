@@ -18,7 +18,7 @@ The algorithm is fairly similar for equivalence and subset queries, and is shown
 If $Q = \{\subQ\}$ and a single positive example $\vec{p} \in \targ$ is given, then $\targ$ is learnable in $\sum \subCi{i}$ subset queries and $k \cdot \sum \subCi{i}$ membership queries. 
 \end{proposition}
 \begin{proof}
-The learning process is described in Algorithm \ref{linsubalg}.
+The learning process is described in Algorithm \ref{lineqalg}.
 For each subset query $\prod S_i \subseteq \targ$, the algorithm either returns `yes' or gives a counterexample $\vec{x} = (x_1, \dots, x_k) \in \prod S_i \backslash \targ$. 
 If the algorithm returns 'yes', then by Observation \ref{subobs} $S_i \subseteq c^*_i$ for all $i$, so the algorithm can return 'yes' to each $A_i$. 
 Otherwise, $\vec{x} \not\in \targ$, so there is an $i$ such that $x_i \not\in c^*_i$. 

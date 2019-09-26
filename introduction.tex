@@ -56,7 +56,7 @@ We will focus on the oracle queries given in Table \ref{table:queries}.
 \end{varwidth}
 
 
-\caption{A simple sketching program with specification}
+\caption{A simple partial program to be synthesized to satisfy a specification $\Phi$}
 \label{sketch}
 \end{figure}
 
@@ -95,7 +95,7 @@ If an oracle can answer queries about correct $x$ or $y$ values separately, then
 If the correct values form intervals, the correct settings will look something like the rectangle shown in figure \ref{sketchsolutions}.
 An algorithm for learning this rectangle can try to simulate learning algorithms for each interval, by acting as the oracle for each sublearner. 
 For example, if both sublearners need a positive example, the learner can query the oracle for a positive example. 
-Given the example $(x_1,y_2)$ as shown in the figure, the learner can then pass $x_1$ and $y_1$ to the sublearners as positive examples. 
+Given the example $(x_1,y_1)$ as shown in the figure, the learner can then pass $x_1$ and $y_1$ to the sublearners as positive examples. 
 However, this does not apply to negative examples, such as $(x_2, y_2)$ in the figure. 
 In this example, $x_2$ is in its target interval, but $y_2$ is not. 
 The learner has no way of knowing which subconcept a negative element fails on.

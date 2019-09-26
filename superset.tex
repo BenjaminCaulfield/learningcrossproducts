@@ -1,7 +1,7 @@
 \begin{proposition}
 %Assume for each concept class $C_i$ there is a learning algorithm $A_i$ that learns each $c_i \in C_i$ in $$ superset queries (we don't assume $Q_i(c_i)$ is finite for all $c_i$). 
 
-If $Q = \{ \supQ \}$, then there is an algorithm that learns any concept $\targ = c^*_1 \times \dots \times c^*_k  \in \prod C_i $ in $\sum \supCi{i}(c^*_i)$ queries.  
+If $Q = \{ \supQ \}$, then there is an algorithm that learns any concept $\targ \in \prod C_i $ in $\sum \supCi{i}(c^*_i)$ queries.  
 \end{proposition}
 \begin{proof}
 Algorithm \ref{supalg} learns $\prod C_i $ by simulating the learning of each $A_i$ on its respective class $C_i$. 

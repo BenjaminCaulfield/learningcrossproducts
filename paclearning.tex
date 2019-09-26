@@ -1,0 +1,176 @@
+This sections discusses the problem of PAC-learning the cross products of concept classes. \todo{do we want to assume familiarity with VC dimension?}
+
+Previously, van Der Vaart and Weller \cite{van2009note} have shown the following bound on the VC-dimension of cross-products of sets:
+\[\VC(\prod C_i) \le a_1 log(k a_2) \sum \VC(C_i) \tag{hi}\] 
+
+Here $a_1$ and $a_2$ are constants with $a_1 \approx 2.28$ and $a_2 \approx 3.92$.
+As always, $k$ is the number of concept classes included in the cross-product.
+
+The VC-dimension gives a bound on the number of labelled examples needed to PAC-learn a concept, but says nothing of the computational complexity of the learning process. 
+This complexity mostly comes from the problem of finding a concept in a concept class that is consistent with a set of labelled examples. 
+We will show that the complexity of learning cross-products of concept classes is a polynomial function of the complexity of learning from each individual concept class.
+
+First, we will describe some necessary background information on PAC-learning.
+
+\subsection{PAC-learning Background}
+
+
+
+
+
+
+\begin{definition}
+Let $C$ be a concept class over a space $X$. 
+We say that $C$ is efficiently PAC-learnable if there exists an algorithm $A$ with the following property:
+For every distribution $\dist$ on $X$, every $c \in C$, and every $\epsilon, \delta \in (0, 1)$,
+if algorithm $A$ is given access to $EX(c,\dist)$ then with probability $1 - \delta$, $A$ will return a $c' \in h$ such that $error(c') \le \epsilon$. 
+$A$ must run in time polynomial in $1/\epsilon$, $1/\delta$, and $size(c)$. 
+\end{definition}
+
+We will refer to $\epsilon$ as the `accuracy' parameter and $\delta$ as the `confidence' parameter.
+All PAC-learners have a \emph{sample complexity} function $m_C(\epsilon, \delta): (0,1)^2 \rightarrow \mathbb{N}$. 
+The sample complexity is the number of samples an algorithm must see in order to probably approximately learn a concept with parameters $\epsilon$ and $\delta$.
+
+
+Given a set $S$ of labelled examples in $X$, we will use $A(S)$ to denote the the concept class the algorithm $A$ returns after seeing set $S$. \todo{does is matter whether $A$ is given $S$ or $A$ accesses $S$ through $EX$? The sublearners all use $EX$ so maybe it doesn't matter}
+
+
+A learner $A$ is an \emph{empirical risk minimizer} if $A(C)$ returns a $c \in C$ that minimizes the number of misclassified examples (i.e., it minimizes $|\{(x,b) \in S \mid c^*(x) \ne b\}|$). 
+
+Empirical risk minimizers are closely related to VC dimension and PAC-learnability as shown in the following theorem (Theorem 6.7 from \cite{shalev2014understanding})
+
+\begin{theorem}
+\label{fundpac}
+If the concept class $C$ has VC dimension $d$, then there is a constant $a$ such that applying an Empirical Risk Minimizer $A$ to $m_C(\epsilon, \delta)$ samples will PAC-learn in $C$, where
+\[m_C(\epsilon, \delta) \le a \frac{d \cdot log(1/\epsilon) + log(1/\delta)}{\epsilon} \]
+\end{theorem}
+
+Finally, we will discuss the \emph{growth function}. 
+The growth function describes how well a concept class can differentiate 
+
+More formally, for a concept class $C$ and $m \in \mathbb{N}$, the growth function $G_C(m)$ is defined by:
+\[ G_C(m) = \max_{x_1,x_2,\dots,x_m}|\{ (c(x_1), c(x_2), \dots, c(x_m)) \mid c \in C\}| \]
+
+The VC-dimension of a class $C$ is the largest number $d$ such that $G_C(d) = 2^d$. 
+
+We will use the following bound, sometimes called the PerlesÐSauerÐShelah Lemma, to bound the runtime of learning cross-products. 
+
+\begin{lemma}
+\label{pss}
+For any concept class $C$ with VC-dimension $d$ and $m > d+1$:
+\[ G_C(m) \le (em/d)^d\]
+\end{lemma}
+
+\subsection{PAC-Learning Cross-Products}
+
+We now have enough background to describe the strategy for PAC-learning cross-products.
+We will just describe learning the cross-product of two concepts. \todo{do we want to describe the general strategy?} 
+As above, we assume we have concept classes $C_1$ and $C_2$ and PAC-learners $A_1$ and $A_2$.
+
+
+Assume that $C_1$ and $C_2$ have VC-dimension $d_1$ and $d_2$, respectively. 
+We can use the bound from van Der Vaart and Weller to get an upper bound $d$ on the VC-dimension of their cross-product.
+Assume the algorithm is given an $\epsilon$ and $\delta$ and there is a fixed target concept $c^* = c_1^* \times c_2^*$.
+Theorem \ref{fundpac} gives a bound on the sample complexity $m_{C_1 \times C_2}(\epsilon, \delta)$. 
+The algorithm will take a sample of labelled examples of size $m_{C_1 \times C_2}(\epsilon, \delta)$. 
+Our goal is to construct an Empirical Risk Minimizer for $C_1 \times C_2$. 
+In our case, this means that for any sample $S$, the algorithm will yield a concept in $C_1 \times C_2$ that is consistent with $S$. 
+
+
+So let $S$ be any such sample the algorithm takes. 
+This set can easily be split into positive examples $S^+$ and negative examples $S^-$, both in $X_1 \times X_2$.
+The algorithm works by maintaining sets labeled samples $L_1$ and $L_2$ for each dimension. 
+For any $(x_1, x_2) \in S^+$, it holds that $x_1 \in c^*_1$ and $x_2 \in c^*_2$ so $(x_1, \top)$ and $(x_2, \top)$ are added to $L_1$ and $L_2$ respectively. 
+For any $(x_1, x_2) \in S^-$, we know that $x_1 \not\in c^*_1$ or $x_2 \not\in c^*_2$ (or both), but it is not clear which is true. 
+However, since the goal is only to create an Empirical Risk Minimizer, it is enough to find any concepts $C_1$ and $C_2$ that are consistent with these samples. 
+In other words, we need to find a $c_1 \in C_1$ and a $c_2 \in C_2$ such that for every $(x_1, x_2) \in S^+$, $x_1 \in c_1$ and $x_2 \in c_2$ and for all $(x_1, x_2) \in S^-$, either $x_1 \not\in c^*_1$ or $x_2 \not\in c^*_2$.
+One idea would be to try out all possible assignments to elements in $S^-$ and check if any such assignment fits any possible concepts. \todo{is it clear what "all possible assignments" are?}
+This, however, would be exponential in $|S^-|$. 
+
+Bounding the size of the growth function can narrow this search. 
+Specifically, let $S_1^- = \{ x \mid \exists y, (x,y) \in S^-\}$, let $m = |S_1^-|$ and order the elements of $S_1^-$ by $x_1, x_2, \dots, x_m$. % and $S_2^- = \{ x \mid \exists y, (y,x) \in S^-\}$. 
+By the definition of the growth function and Lemma \ref{pss}:
+\[ |\{ (c(x_1), c(x_2), \dots, c(x_m)) \mid c \in C_1\}| \le G_{C_1}(m) \le (em/d)^d \] \todo{mention why we assume m > d}
+In other words, there are less than $(em/d)^d$ assignments of truth values to elements of $S_1^-$ that are consistent with some concept in $C_1$.
+If the algorithm can check every $c_1 \in C_1$ consistent with $S^+$ and $S^-_1$, it can then call $A_2$ to see if there is any $c_2 \in C_2$ such that $(c_1 \times c_2)$ assigns true to every element in $S^+$ and false to every element in $S^-$. 
+
+To efficiently find the elements of $C_1$ consistent with $S^+$ and $S^-_1$ can be accomplished by something like binary search, as shown in Algorithm \ref{recpaclearn}.
+
+
+
+\begin{theorem}
+Let $C_1$ and $C_2$ be concept classes and let $A_1$ and $A_2$ be PAC-learners with runtime $A_1(\epsilon, \delta)$ and $A_2(\epsilon, \delta)$, respectively. 
+Let $C_1$ and $C_2$ have VC-dimension $d_1$ and $d_2$, respectively.
+There exists a PAC-learner for $C_1 \times C_2$ that can learn any concept using a sample of size $m = ((d_1 + d_2) \cdot log(1/\epsilon) + log(1/\delta))/\epsilon$.\todo{there are some constants in there}
+The learner requires time $O(m^d_1(A_1(1/m, log(\delta)) +  A_2(1/m, log(\delta))))$.
+\end{theorem}
+
+
+
+
+
+%Empirical Risk Minimization
+
+
+
+\begin{algorithm}[H]
+\label{recpaclearn}
+\SetAlgoLined
+\KwResult{Find Subconcepts Consistent with Sample}
+%\SetKwFunction{FMain}{FindSubconcepts}{}
+\SetKwProg{FMain}{FindSubconcepts}{}{}
+\SetKwProg{FRec}{RecursiveFindSubconcepts}{}{}
+
+
+\KwIn{
+$S^+$: Set of positive examples in $X_1 \times X_2$\\
+$S^-$: Set of negative examples in $X_1 \times X_2$\\
+$\delta:$ Confidence parameter in $(0,1)$
+}
+ \FMain{($S^+$, $S^-$, $\delta$)}{
+ $\delta' := log(\delta) / (G_{C_1}(|S|) + G_{C_2}(|S|))$\;\todo{double check this parameter}
+ $\epsilon' := 1 / |S|$\;
+ \tcp{$L_1$: Labelled samples in $X_1$}
+ $L_1 := \{(x_1, \top) \mid \exists y,  (x_1, y) \in S^+ \}$\;
+  \tcp{$L_2$: Labelled samples in $X_2$}
+ $L_2 := \{(x_2, \top) \mid \exists y,  (y, x_2) \in S^+ \}$\; 
+ $U := S^-$\;
+ \Return RecursiveFindSubconcepts($L_1$, $L_2$, $U$, $\epsilon'$, $\delta'$) \;
+ }
+
+
+%\KwIn{
+%$L_1$: Set of labelled samples in $X_1 \times \{\bot, \top\}$\\
+%$L_2$: Set of labelled samples in $X_2 \times \{\bot, \top\}$\\
+%$U$: Set of `unlabelled' samples (known to be negative) in $(X_1 \times X_2)$\\
+%$\epsilon', \delta' \in (0,1)$
+%}
+\FRec{($L_1$, $L_2$, $U$, $\epsilon'$, $\delta'$):}{
+
+\tcp{Run once all labels are assigned to the first dimension of $U$}
+\tcp{Attempts to find concept in $C_2$ consistent with all labels given in $L_2$}
+\If{$U = \emptyset$}{
+	\eIf{$A_2(L_2, \epsilon', \delta')$}{
+		\Return{$(A_1(L_1, \epsilon', \delta'), A_2(L_2, \epsilon', \delta'))$}\;
+	}{$\bot$\;}	
+}
+
+Get $(x_1, x_2) \in U$\;
+$U := U \backslash \{(x_1, x_2)\} $\;
+
+ \tcp{Attempts to label $x_1$ as false in $c^*_1$}
+\If{$A_1(L_1 \cup \{ (x_1, \bot) \}, \epsilon', \delta') \ne \bot$}{
+	$c = RecursiveFindSubconcepts(L_1 \cup \{ (x_1, \bot) \}, L_2, U, \epsilon', \delta')$\;
+	\If{$c \ne \bot$}{\Return c\;}
+}
+
+\tcp{Attempts to label $x_1$ as true in $c^*_1$}
+\If{$A_1(L_1 \cup \{ (x_1, \top) \}, \epsilon', \delta') \ne \bot$}{
+	$c = RecursiveFindSubconcepts(L_1 \cup \{ (x_1, \top) \}, L_2 \cup \{(x_2, \bot) \}, U, \epsilon', \delta')$\;
+	\If{$c \ne \bot$}{\Return c \;}
+}
+
+}
+
+%\caption{Learning Disjoint Unions}
+\end{algorithm}

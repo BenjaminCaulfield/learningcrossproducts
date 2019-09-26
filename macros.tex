@@ -8,26 +8,44 @@
 \usepackage{epstopdf}
 \usepackage[noend]{algorithm2e}
 \usepackage{tabularx}
-\usepackage{todonotes}
+\usepackage[disable]{todonotes}
+%\usepackage{todonotes}
 \usepackage{multirow}
+
+%\usepackage{authblk}
+
 %\usepackage{slashbox}
 \usepackage{ amssymb }
 \usepackage{tikz}
 \usetikzlibrary{arrows}
+\usepackage{varwidth}
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily,
+  mathescape
+}
+
+\newcommand\mycommfont[1]{\footnotesize\ttfamily\textcolor{gray}{#1}}
+\SetCommentSty{mycommfont}
 
 
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 
 \newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
 \newtheorem{proposition}{Proposition}
 \newtheorem{remark}{Remark}
 \newtheorem{observation}{Observation}
+\newtheorem{definition}{Definition}
 
-\newcommand{\targ}{\vec{c}^*}
+\theoremstyle{definition}
+\newtheorem{example}{Example}
+
+\newcommand{\targ}{\prod c^*_i}
 \newcommand{\dist}{\mathcal{D}}
 
-%\newcommand{\genQ}{$q$}
-\newcommand{\oneposQ}{$1$Pos}
+\newcommand{\genQ}{q}
+\newcommand{\oneposQ}{\emph{1}Pos}
 \newcommand{\posQ}{Pos}
 \newcommand{\memQ}{\emph{Mem}}
 \newcommand{\subQ}{\emph{Sub}}
@@ -35,8 +53,8 @@
 \newcommand{\eqQ}{\emph{EQ}}
 \newcommand{\pacQ}{\emph{EX}}
 
-%\newcommand{\genQi}[1]{$q_{#1}$}
-\newcommand{\oneposQi}[1]{$1$Pos_{#1}}
+\newcommand{\genQi}[1]{q_{#1}}
+\newcommand{\oneposQi}[1]{\emph{1}Pos_{#1}}
 \newcommand{\posQi}[1]{Pos_{#1}}
 \newcommand{\memQi}[1]{\emph{Mem}_{#1}}
 \newcommand{\subQi}[1]{\emph{Sub}_{#1}}
@@ -78,6 +96,8 @@
 \newcommand{\ntree}{\mathfrak{c}_{sub}}
 \newcommand{\eqhard}{\mathfrak{C}}
 
+
+\newcommand{\VC}{\mathcal{V}\mathcal{C}}
 
 
 
