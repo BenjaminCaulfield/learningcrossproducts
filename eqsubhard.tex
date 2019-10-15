@@ -5,9 +5,9 @@ We will construct a class $\eqhard$ that can be learned from $n$ equivalence or 
 
 We define $\eqhard$ to be the set $\{ \ntreef(s) \mid s \in \mathbb{N}^* \}$, where $\ntreef(s)$ is defined as follows:
 
-\[\ntreef(\lambda) = \{\lambda\} \times \mathbb{N}\]
-\[\ntreef(s) = (\{s\} \times \mathbb{N}) \cup \ntree(s)\]
-\[\ntree(sa) = (\{s\} \times (\mathbb{N} \backslash \{a\})) \cup \ntree(s)\]\\
+\[\ntreef(\lambda) := \{\lambda\} \times \mathbb{N}\]
+\[\ntreef(s) := (\{s\} \times \mathbb{N}) \cup \ntree(s)\]
+\[\ntree(sa) := (\{s\} \times (\mathbb{N} \backslash \{a\})) \cup \ntree(s)\]\\
 
 For example, $\ntreef(12) = (\{12\} \times \mathbb{N}) \cup (\{1\}\times(\mathbb{N} \backslash \{2\}))\cup(\{\lambda\} \times (\mathbb{N} \backslash \{1\}))$.
 
@@ -113,7 +113,7 @@ First, we need a couple definitions.
 A concept $\prod \ntreef(s_i)$ is \emph{justifiable} if one of the following holds:
 \begin{itemize}
 \item For all $i$, $s_i = \lambda$
-\item There is an $i$ and an $a \in \mathbb{N}$ and $w \in \mathbb{N}^*$ such that $s_i = wa$, and $\ntreef(s_1) \times \dots \times \ntreef(w) \times \dots \times \ntreef(s_k)$ \todo{need flat cross product} was justifiably queried to the oracle and received a counterexample $\vec{x}$ such that $\vec{x}[i] = (w, a)$. 
+\item There is an $i$ and an $a \in \mathbb{N}$ and $w \in \mathbb{N}^*$ such that $s_i = wa$, and $\ntreef(s_1) \times \dots \times \ntreef(w) \times \dots \times \ntreef(s_k)$ \todo{need flat cartesian product} was justifiably queried to the oracle and received a counterexample $\vec{x}$ such that $\vec{x}[i] = (w, a)$. 
 \end{itemize}
 
 A concept is \emph{justifiably queried} if it was queried to the oracle when it was justifiable. 
@@ -164,15 +164,15 @@ The graph of justifiable queries is given in Figure \ref{eqhardtree}.
 \label{eqhardtree}
 \begin{tikzpicture}[->,>=stealth',level/.style={sibling distance = 5cm/#1,
   level distance = 1.5cm}] 
-\node[cnode] at (-.5, 0)   (0) {JQ: $(\ntreef(\lambda),\ntreef(\lambda))$\\ CE: $((\lambda, 1),(\lambda, 2))$};
+\node[cnode] at (-.5, 0)   (0) {JQ: $(\ntreef(\lambda),\ntreef(\lambda))$ \vspace{1mm} \\ CE: $((\lambda, 1),(\lambda, 2)) $ \vspace{2mm}   };
 
-\node[cnode] at (-4, -2)   (10) {JQ: $(\ntreef(1),\ntreef(\lambda))$\\ CE: $((1, 3),(\lambda, 4))$};
-\node[cnode] at (3.4, -2)   (11) {JQ: $(\ntreef(\lambda),\ntreef(2))$\\ CE: $((\lambda, 5),(2,6))$};
+\node[cnode] at (-4, -2)   (10) {JQ: $(\ntreef(1),\ntreef(\lambda))$ \vspace{1mm} \\ CE: $((1, 3),(\lambda, 4))$ \vspace{2mm} };
+\node[cnode] at (3.4, -2)   (11) {JQ: $(\ntreef(\lambda),\ntreef(2))$ \vspace{1mm} \\ CE: $((\lambda, 5),(2,6))$ \vspace{1mm} };
 
-\node[cnode] at (-6, -4)   (20) {JQ: $(\ntreef(1,3),\ntreef(\lambda))$};
-\node[cnode] at (-2.25, -4)   (21) {JQ: $(\ntreef(1),\ntreef(4))$};
-\node[cnode] at (1.5, -4)   (22) {JQ: $(\ntreef(5),\ntreef(2))$};
-\node[cnode] at (5.25, -4)   (23) {JQ: $(\ntreef(\lambda),\ntreef(2,6))$};
+\node[cnode] at (-6, -4)   (20) {JQ: $(\ntreef(1,3),\ntreef(\lambda))$ \vspace{2mm} };
+\node[cnode] at (-2.25, -4)   (21) {JQ: $(\ntreef(1),\ntreef(4))$ \vspace{2mm}};
+\node[cnode] at (1.5, -4)   (22) {JQ: $(\ntreef(5),\ntreef(2))$ \vspace{2mm}};
+\node[cnode] at (5.25, -4)   (23) {JQ: $(\ntreef(\lambda),\ntreef(2,6))$ \vspace{2mm}};
 
  \draw[edge_style]  (0) edge node[above left]{$1 \le s_1$} (10);
  \draw[edge_style]  (0) edge node[above right]{$2 \le s_2$} (11);

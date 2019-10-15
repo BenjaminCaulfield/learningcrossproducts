@@ -9,34 +9,60 @@ Fix sets $S_1, S_2, \dots, S_k$, points $x_1, x_2, \dots, x_k$ and an index $i$.
 If $x_j \in S_j$ for all $j \ne i$, then $(x_1, x_2, \dots, x_k) \in \prod S_i$ if and only if $x_i \in S_i$.
 \end{observation}
 
-So, given a positive example $\vec{p}$,  we can see that $\vec{p}[j \leftarrow x_j] \in targ$ if and only if $x_j \in c^*_j$.
+So, given a positive example $\vec{p}$,  we can see that $\vec{p}[j \leftarrow x_j] \in \targ$ if and only if $x_j \in c^*_j$.
 This fact is used to learn using subset or equivalence queries with the addition of membership queries and a positive example.
 The algorithm is fairly similar for equivalence and subset queries, and is shown as a single algorithm in Algorithm \ref{lineqalg}.
  
 
 \begin{proposition}
-If $Q = \{\subQ\}$ and a single positive example $\vec{p} \in \targ$ is given, then $\targ$ is learnable in $\sum \subCi{i}$ subset queries and $k \cdot \sum \subCi{i}$ membership queries. 
+If $Q \in \{\{\subQ\}, \{\eqQ\}\}$ and a single positive example $\vec{p} \in \targ$ is given, then $\targ$ is learnable in $\sum \genCi{i}$ queries from $Q$ (i.e., subset or equivalence queries) and $k \cdot \sum \genCi{i}$ membership queries. 
 \end{proposition}
 \begin{proof}
-The learning process is described in Algorithm \ref{lineqalg}.
+The learning process for either subset or equivalence queries is described in Algorithm \ref{lineqalg}, with differences marked in comments. 
+In either case, once the correct $c_j$ is found for any $j$, $S_j$ will equal $c_j$ for all future queries, so any counterexamples must fail on an $i \ne j$. 
+
+We separately show for each type of query that a correct answer is given to at least one learner $A_i$ for each subset (resp. equivalence) query to the cross-product oracle. 
+Moreover, at most $k$ membership queries are made per subset (resp. equivalence) query, yielding the desired bound. 
+
+Subset Queries:
 For each subset query $\prod S_i \subseteq \targ$, the algorithm either returns `yes' or gives a counterexample $\vec{x} = (x_1, \dots, x_k) \in \prod S_i \backslash \targ$. 
 If the algorithm returns 'yes', then by Observation \ref{subobs} $S_i \subseteq c^*_i$ for all $i$, so the algorithm can return 'yes' to each $A_i$. 
 Otherwise, $\vec{x} \not\in \targ$, so there is an $i$ such that $x_i \not\in c^*_i$. 
 By Observation \ref{posobs} the algorithm can query $\vec{p}[j \leftarrow x_j]$ for all $j$ until the $x_i \not\in c^*_i$ is found. 
 
-Once the correct $c_j$ is found for any $j$, $S_j$ will equal $c_j$ for all future queries, so any counterexamples must fail on an $i \ne j$. 
-
-Each subset query results in a correct answer being given to at least one learner $A_i$ and at most $k$ membership queries are made per subset query, yielding the desired bound on queries. 
+Equivalence Queries:
+For each equivalence query $\prod S_i = \targ$, the algorithm either returns 'yes', or gives a counterexample $\vec{x} = (x_1, \dots, x_k)$.
+If the algorithm returns `yes', then a valid target concept is learned. 
+Otherwise, either $\vec{x} \in \prod S_i \backslash \targ$ or $\vec{x} \in \targ \backslash \prod S_i$.
+In the first case, as with subset queries,  the algorithm uses $k$ membership queries to query $\vec{p}[j \leftarrow x_j]$ for all $j$.
+Once the $x_i \not\in c^*_i$ is found it is given to $A_i$ as a counterexample.
+In the second case, as with superset queries, the algorithm checks if $x_j \in S_j$ for all $j$ until the $x_i \not\in c^*_i$ is found and given to $A_i$.
 \end{proof}
 
-\begin{proposition}
-If $Q = \{\eqQ\}$ and a single positive example $\vec{p} \in \targ$ is given, then $\targ$ is learnable in $\sum \eqCi{i}$ equivalence queries and $k \cdot \sum \eqCi{i}$ membership queries. 
-\end{proposition}
-\begin{proof}
-The proof for when  $Q = \{\eqQ\}$ is analogous, with only two differences. 
-If the oracle returns `true' to an equivalence query, then we can assume each $A_i$ returns the correct hypothesis the next step. 
-Also, if the counterexample is some $\vec{x} \in \targ \backslash \prod S_i$, then we can see the algorithm behaves correctly using the same argument as in the proof for superset queries.
-\end{proof}
+
+%\begin{proposition}
+%If $Q = \{\subQ\}$ and a single positive example $\vec{p} \in \targ$ is given, then $\targ$ is learnable in $\sum \subCi{i}$ subset queries and $k \cdot \sum \subCi{i}$ membership queries. 
+%\end{proposition}
+%\begin{proof}
+%The learning process is described in Algorithm \ref{lineqalg}.
+%For each subset query $\prod S_i \subseteq \targ$, the algorithm either returns `yes' or gives a counterexample $\vec{x} = (x_1, \dots, x_k) \in \prod S_i \backslash \targ$. 
+%If the algorithm returns 'yes', then by Observation \ref{subobs} $S_i \subseteq c^*_i$ for all $i$, so the algorithm can return 'yes' to each $A_i$. 
+%Otherwise, $\vec{x} \not\in \targ$, so there is an $i$ such that $x_i \not\in c^*_i$. 
+%By Observation \ref{posobs} the algorithm can query $\vec{p}[j \leftarrow x_j]$ for all $j$ until the $x_i \not\in c^*_i$ is found. 
+%
+%Once the correct $c_j$ is found for any $j$, $S_j$ will equal $c_j$ for all future queries, so any counterexamples must fail on an $i \ne j$. 
+%
+%Each subset query results in a correct answer being given to at least one learner $A_i$ and at most $k$ membership queries are made per subset query, yielding the desired bound on queries. 
+%\end{proof}
+%
+%\begin{proposition}
+%If $Q = \{\eqQ\}$ and a single positive example $\vec{p} \in \targ$ is given, then $\targ$ is learnable in $\sum \eqCi{i}$ equivalence queries and $k \cdot \sum \eqCi{i}$ membership queries. 
+%\end{proposition}
+%\begin{proof}
+%The proof for when  $Q = \{\eqQ\}$ is analogous, with only two differences. 
+%If the oracle returns `true' to an equivalence query, then we can assume each $A_i$ returns the correct hypothesis the next step. 
+%Also, if the counterexample is some $\vec{x} \in \targ \backslash \prod S_i$, then we can see the algorithm behaves correctly using the same argument as in the proof for superset queries.
+%\end{proof}
 
 
 \begin{algorithm}[H]
@@ -44,12 +70,13 @@ Also, if the counterexample is some $\vec{x} \in \targ \backslash \prod S_i$, th
 \SetAlgoLined
 \KwResult{Learn $\prod C_i $ from Equivalence (or Subset) Queries, Membership Queries, and One Positive Example}
 \For{$i = 1 \dots k$}{
-	Set $S_i$ to initial equivalence query from $A_i$
+	Set $S_i$ to initial query from $A_i$
 }
  \While{Some $A_i$ has not completed}{
         Query $\prod S_i$ to oracle\;
-        \eIf{The Oracle returns `True'}{
-        		Pass `True' to each $A_i$\;
+        \eIf{The Oracle returns `yes'}{
+        		Pass `yes' to each $A_i$\;
+		\tcp{If Q = \{EQ\} each sublearner will immediately complete}
         }{        
              	Get counterexample $\vec{x} = (x_1,\dots,x_k)$\;
             	\eIf{$\vec{x} \in \targ \backslash \prod S_i$}{ \tcp{Only happens if Q = \{EQ\}}
@@ -71,6 +98,8 @@ Also, if the counterexample is some $\vec{x} \in \targ \backslash \prod S_i$, th
             	}
 	}
 }
+Each $A_i$ returns some $c_i$\;
+Return $\prod c_i$\;
 \caption{Algorithm for learning from Equivalence (or Subset)  Queries, Membership Queries, and One Positive Example}
 \end{algorithm}
 

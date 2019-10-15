@@ -19,8 +19,8 @@ learn the entire concept from interaction with an oracle.
 In contrast, in this paper, we study the setting of modular concept learning,
 where an exact-learning problem is analyzed by breaking it into independent components. 
 If an element's membership in a concept depends solely on its membership in the components, learning the concept as a whole can be reduced to learning the components. 
-We study concepts that are the cross-products of their component concepts.  
-This can be thought of as learning conjunctions in that an element is part of a target concept if and only if its relevant variables are all of the component concepts. 
+We study concepts that are the Cartesian products (i.e., cross-products) of their component concepts.  
+This can be thought of as learning conjunctions in that an element is part of a target concept if and only if its relevant variables are all of the component concepts. \todo{Is this clear? Should we be more explicit about the independent variable / concept class connection?}
 
 We will focus on the oracle queries given in Table \ref{table:queries}.
 
@@ -33,11 +33,13 @@ We will focus on the oracle queries given in Table \ref{table:queries}.
     Single Positive Query & $\oneposQ$ & $\oneposC(c)$ & Return a fixed $x \in c^*$ \\ \hline
     Positive Query & $\posQ$ & $\posC(c)$ & Return an $x\in c^*$ that has not yet been given as a positive example (if one exists)\\ \hline
     Membership Query & $\memQ$ & $\memC(c)$ & Given string $s$, return true iff $s \in c^*$ \\ \hline
-    Equivalence Query & $\eqQ$ & $\eqC$ & Given $c \in C$, return true if $c=c^*$ otherwise return $x \in (c \backslash c^*) \cup (c^* \backslash c)$\\ \hline 
+    Equivalence Query & $\eqQ$ & $\eqC(c)$ & Given $c \in C$, return true if $c=c^*$ otherwise return $x \in (c \backslash c^*) \cup (c^* \backslash c)$\\ \hline 
     Subset Query & $\subQ$ & $\subC(c)$ & Given $c \in C$, return `true' if $c \subseteq c^*$ \mbox{  } otherwise return some $x \in c \backslash c^*$ \\ \hline
     Superset Query & $\supQ$ & $\supC(c)$ & Given $c \in C$, return `true' if $c \supseteq c^*$  otherwise return some $x \in c^* \backslash c$\\ \hline
+    Example Query & $\pacQ_\dist$ & $\pacC(c, \dist)$ & Samples $x$ from $\dist$ and returns $x$ with a label indicating whether $x \in c^*$. \\ \hline
   \end{tabularx}
 \end{center}
+\caption{Types of queries studied in this paper.}
 \end{table}
 
 \subsection{A Motivating Example}
@@ -60,13 +62,13 @@ We will focus on the oracle queries given in Table \ref{table:queries}.
 \label{sketch}
 \end{figure}
 
-To illustrate the learning problem, consider the sketching problem given in figure \ref{sketch}.
+To illustrate the learning problem, consider the sketching problem given in Figure \ref{sketch}.
 Say we wanted to find the set of possible initial values for $x$ and $y$ that can replace the $??$ values so that the program satisfies $\Phi$.
 
 Looking at the structure of this program and specification, we can see that the correctness of these two variables are independent of each other. 
 Correct $x$ values are correct independent of $y$ and vice-versa.
 Therefore, the set of settings will be the cross product of the acceptable settings for each variable.  
-If an oracle can answer queries about correct $x$ or $y$ values separately, then the oracle can simply learn the acceptable values separately and take their cartesian-product. 
+If an oracle can answer queries about correct $x$ or $y$ values separately, then the oracle can simply learn the acceptable values separately and take their Cartesian product. 
 
 \begin{figure}
 \begin{tikzpicture}
@@ -92,8 +94,8 @@ If an oracle can answer queries about correct $x$ or $y$ values separately, then
 \end{figure}
 
 
-If the correct values form intervals, the correct settings will look something like the rectangle shown in figure \ref{sketchsolutions}.
-An algorithm for learning this rectangle can try to simulate learning algorithms for each interval, by acting as the oracle for each sublearner. 
+If the correct values form intervals, the correct settings will look something like the rectangle shown in Figure \ref{sketchsolutions}.
+An algorithm for learning this rectangle can try to simulate learning algorithms for each interval by acting as the oracle for each sublearner. 
 For example, if both sublearners need a positive example, the learner can query the oracle for a positive example. 
 Given the example $(x_1,y_1)$ as shown in the figure, the learner can then pass $x_1$ and $y_1$ to the sublearners as positive examples. 
 However, this does not apply to negative examples, such as $(x_2, y_2)$ in the figure. 

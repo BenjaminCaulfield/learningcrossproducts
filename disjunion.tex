@@ -10,6 +10,13 @@ Assume we have sets $S_1,\dots,S_k$ and $T_1,\dots,T_k$.
 Then $\bigcupdot S_i \subseteq \bigcupdot T_i$ if and only $S_i \subseteq T_i$ for all $i$.
 Likewise $\bigcupdot S_i = \bigcupdot T_i$ if and only if $S_i = T_i$ for all $i$.
 
+We can summarize these results in the following proposition.
+
+\begin{proposition}
+Take any $Q \in \{ \{\eqQ\}, \{\subQ\}, \{\supQ\}, \{\memQ\}\}$ and assume each concept class $C_i$ is learnable from $\genC{i}$ many queries.  \todo{should I say $\genC{i}(c_i)$ instead?}
+Then there exists an algorithm that can learn the disjoint union of concept classes $\bigcupdot c_i$ in $\sum \genC{i}$ many queries.  
+\end{proposition}
+
 
 
 \begin{algorithm}[H]

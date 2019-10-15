@@ -1,17 +1,36 @@
+This section introduces arguably the simplest positive result of the paper: when using superset queries, learning cross-products of concepts is as easy as learning the individual concepts. 
+
+Like all positive results in this paper, this is accomplished by algorithm that takes an oracle for the cross-product concept $\prod c_i^*$ and simulates the learning process for each sublearner $A_i$ by acting as an oracle for each such sublearner. 
+
+\todo{make sure subconcept sublearner, etc, is defined}
+
+\todo{should I give more intuition? It's all in the proof fwiw}
+
+%For any set $
+
+%As this is the simplest such reduction, it is worth understanding this 
+
+%As shown in the introduction, it is easy to handle positive examples when learning cross-products. 
+%For any $(x_1, \dots, x_k) \in \prod c_i^*$, it holds that $x_i \in c_i^*$ for all $i$. 
+%Learning from superset queries is easy since all counter-examples are positive. 
+%So for each superset query $\prod S_i$, either the oracle d
+
+
 \begin{proposition}
 %Assume for each concept class $C_i$ there is a learning algorithm $A_i$ that learns each $c_i \in C_i$ in $$ superset queries (we don't assume $Q_i(c_i)$ is finite for all $c_i$). 
 
 If $Q = \{ \supQ \}$, then there is an algorithm that learns any concept $\targ \in \prod C_i $ in $\sum \supCi{i}(c^*_i)$ queries.  
 \end{proposition}
 \begin{proof}
-Algorithm \ref{supalg} learns $\prod C_i $ by simulating the learning of each $A_i$ on its respective class $C_i$. 
-The algorithm asks each $A_i$ for superset queries $S_i$, queries the product $\prod S_i$ to the oracle, and then uses the answer to answer at least one query to some $A_i$. 
+Algorithm \ref{supalg} learns $\boxtimes C_i $ by simulating the learning of each $A_i$ on its respective class $C_i$. 
+The algorithm asks each $A_i$ for superset queries $S_i \supseteq c_i^*$, queries the product $\prod S_i$ to the oracle, and then uses the answer to answer at least one query to some $A_i$. \todo{should there be a special symbol for queries instead of just $\supseteq$}
 Since at least one $A_i$ receives an answer for each oracle query, at most $\sum \supCi{i}(c^*_i)$ queries must be made in total. 
 
  
 
 We will now show that each oracle query results in at least one answer to an $A_i$ query (and that the answer is correct). 
-The oracle first checks if the target concept is empty, if not it proceeds as normal.
+The oracle first checks if the target concept is empty and stops if so.
+If no concept class contains the empty concept, this check can be skipped. 
 At each step, the algorithm poses query $\prod S_i$ to the oracle. 
 If the oracle returns 'yes' (meaning $\prod S_i \supseteq \targ$), then  $S_i \supseteq c_i^*$ for each $i$ by Observation \ref{subobs}, so the oracle answers 'yes' to each $A_i$. 
 If the oracle returns 'no', it will give a counterexample $\vec{x} = (x_1,\dots,x_k) \in \targ \backslash \prod S_i$. 

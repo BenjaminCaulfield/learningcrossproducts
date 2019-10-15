@@ -5,7 +5,7 @@ We will start with a lower-bound on learnability from positive examples.
 There exist concepts $C_1$ and $C_2$ that are each learnable from constantly many positive queries, such that $C_1 \times C_2$ is not learnable from any number of positive queries. 
 \end{proposition}
 \begin{proof}
-Let $C_1 := \{ \{a\}, \{a,b\} \}$ and set $C_2 := \{ \mathbb{N}, \mathbb{Z} \backslash \mathbb{N} \}$. 
+Let $C_1 := \{ \{a\}, \{a,b\} \}$ and set $C_2 := \{ \mathbb{N}, \mathbb{Z} \backslash \mathbb{N} \}$. \todo{double check $:=$ is used for defining everywhere}
 To learn the set in $C_1$, pose two positive queries to the oracle, and return $\{a,b\}$ if and only if both $a$ and $b$ are given as positive examples. 
 To learn $C_2$, pose one positive query to the oracle and return $\mathbb{N}$ if and only if the positive example is in $\mathbb{N}$. 
 An adversarial oracle for $C_1 \times C_2$ could give positive examples only in the set $\{a\} \times \mathbb{N}$. 
@@ -20,7 +20,7 @@ We will see later that this lower bound is tight when learning from membership q
 There exists a concept $C$ that is learnable from $\genC$ many queries posed to $Q \subseteq \{ \memQ, \eqQ, \subQ \}$ such that learning $C^k$ requires $(\genC)^k$ many queries.   \todo{Should I explicitly handle infinite and finite cases separately? Should I include bigO notation on the infinite case?}
 \end{proposition}
 \begin{proof}
-Let $C = \{ \{j\} \mid j \in \{0 \dots m\} \}$. 
+Let $C := \{ \{j\} \mid j \in \{0 \dots m\} \}$. 
 
 We can learn $C$ in $m$ membership, subset, or equivalence queries by querying $j \in c^*$, $\{ j \} \subseteq c^*$, or $\{j\} = c^*$, respectively. 
 
@@ -29,5 +29,5 @@ To see this, note that  $C^k$ contains all singletons in a space of size $(m+1)^
 
 So for each subset query $\{x\} \subseteq c^*$, if $\{j\} \ne c^*$, the oracle will return $j$ as a counterexample, giving no new information.  
 Likewise, for each equivalence query $\{j\} = c^*$, if $\{j\} \ne c^*$, the oracle can return $j$ as a counterexample.
-Therefore, any learning algorithm must query $x \in c^*$, $\{ x \} \subseteq c^*$, or $\{x\} = c^*$ for $(m+1)^k - 1$ values of $x$
+Therefore, any learning algorithm must query $x \in c^*$, $\{ x \} \subseteq c^*$, or $\{x\} = c^*$ for $(m+1)^k - 1$ values of $x$.
 \end{proof}

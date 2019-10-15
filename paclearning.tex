@@ -1,7 +1,7 @@
 This sections discusses the problem of PAC-learning the cross products of concept classes. \todo{do we want to assume familiarity with VC dimension?}
 
 Previously, van Der Vaart and Weller \cite{van2009note} have shown the following bound on the VC-dimension of cross-products of sets:
-\[\VC(\prod C_i) \le a_1 log(k a_2) \sum \VC(C_i) \tag{hi}\] 
+\[\VC(\prod C_i) \le a_1 log(k a_2) \sum \VC(C_i)\] 
 
 Here $a_1$ and $a_2$ are constants with $a_1 \approx 2.28$ and $a_2 \approx 3.92$.
 As always, $k$ is the number of concept classes included in the cross-product.
@@ -32,7 +32,7 @@ All PAC-learners have a \emph{sample complexity} function $m_C(\epsilon, \delta)
 The sample complexity is the number of samples an algorithm must see in order to probably approximately learn a concept with parameters $\epsilon$ and $\delta$.
 
 
-Given a set $S$ of labelled examples in $X$, we will use $A(S)$ to denote the the concept class the algorithm $A$ returns after seeing set $S$. \todo{does is matter whether $A$ is given $S$ or $A$ accesses $S$ through $EX$? The sublearners all use $EX$ so maybe it doesn't matter}
+Given a set $S$ of labelled examples in $X$, we will use $A(S)$ to denote the the concept class the algorithm $A$ returns after seeing set $S$ \todo{check whether we should use S as an input or as something given in alg}.
 
 
 A learner $A$ is an \emph{empirical risk minimizer} if $A(C)$ returns a $c \in C$ that minimizes the number of misclassified examples (i.e., it minimizes $|\{(x,b) \in S \mid c^*(x) \ne b\}|$). 
@@ -46,14 +46,13 @@ If the concept class $C$ has VC dimension $d$, then there is a constant $a$ such
 \end{theorem}
 
 Finally, we will discuss the \emph{growth function}. 
-The growth function describes how well a concept class can differentiate 
-
+The growth function describes how many distinct assignments a concept class can make to a given set of elements.  
 More formally, for a concept class $C$ and $m \in \mathbb{N}$, the growth function $G_C(m)$ is defined by:
 \[ G_C(m) = \max_{x_1,x_2,\dots,x_m}|\{ (c(x_1), c(x_2), \dots, c(x_m)) \mid c \in C\}| \]
 
 The VC-dimension of a class $C$ is the largest number $d$ such that $G_C(d) = 2^d$. 
 
-We will use the following bound, sometimes called the PerlesÐSauerÐShelah Lemma, to bound the runtime of learning cross-products. 
+We will use the following bound, a corollary of the Perles-Sauer-Shelah Lemma, to bound the runtime of learning cross-products \cite{shalev2014understanding}. 
 
 \begin{lemma}
 \label{pss}
@@ -65,7 +64,7 @@ For any concept class $C$ with VC-dimension $d$ and $m > d+1$:
 
 We now have enough background to describe the strategy for PAC-learning cross-products.
 We will just describe learning the cross-product of two concepts. \todo{do we want to describe the general strategy?} 
-As above, we assume we have concept classes $C_1$ and $C_2$ and PAC-learners $A_1$ and $A_2$.
+As above, assume concept classes $C_1$ and $C_2$ and PAC-learners $A_1$ and $A_2$ are given.
 
 
 Assume that $C_1$ and $C_2$ have VC-dimension $d_1$ and $d_2$, respectively. 
@@ -74,9 +73,13 @@ Assume the algorithm is given an $\epsilon$ and $\delta$ and there is a fixed ta
 Theorem \ref{fundpac} gives a bound on the sample complexity $m_{C_1 \times C_2}(\epsilon, \delta)$. 
 The algorithm will take a sample of labelled examples of size $m_{C_1 \times C_2}(\epsilon, \delta)$. 
 Our goal is to construct an Empirical Risk Minimizer for $C_1 \times C_2$. 
-In our case, this means that for any sample $S$, the algorithm will yield a concept in $C_1 \times C_2$ that is consistent with $S$. 
+In our case, $c_1 \in C_1$ and $c_2 \in C_2$.
+Therefore,  for any sample $S$, an Empirical Risk Minimizer will yield a concept in $C_1 \times C_2$ that is consistent with $S$. 
+This algorithm is show in Algorithm \ref{recpaclearn}.
 
 
+%%%%%Below Here
+%\begin{comment}
 So let $S$ be any such sample the algorithm takes. 
 This set can easily be split into positive examples $S^+$ and negative examples $S^-$, both in $X_1 \times X_2$.
 The algorithm works by maintaining sets labeled samples $L_1$ and $L_2$ for each dimension. 
@@ -88,13 +91,22 @@ One idea would be to try out all possible assignments to elements in $S^-$ and c
 This, however, would be exponential in $|S^-|$. 
 
 Bounding the size of the growth function can narrow this search. 
-Specifically, let $S_1^- = \{ x \mid \exists y, (x,y) \in S^-\}$, let $m = |S_1^-|$ and order the elements of $S_1^-$ by $x_1, x_2, \dots, x_m$. % and $S_2^- = \{ x \mid \exists y, (y,x) \in S^-\}$. 
+Specifically, let $S_1^- := \{ x \mid \exists y, (x,y) \in S^-\}$, let $m = |S_1^-|$ and order the elements of $S_1^-$ by $x_1, x_2, \dots, x_m$. % and $S_2^- = \{ x \mid \exists y, (y,x) \in S^-\}$. 
 By the definition of the growth function and Lemma \ref{pss}:
-\[ |\{ (c(x_1), c(x_2), \dots, c(x_m)) \mid c \in C_1\}| \le G_{C_1}(m) \le (em/d)^d \] \todo{mention why we assume m > d}
+\[ |\{ (c(x_1), c(x_2), \dots, c(x_m)) \mid c \in C_1\}| \le G_{C_1}(m) \le (em/d)^d \]
 In other words, there are less than $(em/d)^d$ assignments of truth values to elements of $S_1^-$ that are consistent with some concept in $C_1$.
-If the algorithm can check every $c_1 \in C_1$ consistent with $S^+$ and $S^-_1$, it can then call $A_2$ to see if there is any $c_2 \in C_2$ such that $(c_1 \times c_2)$ assigns true to every element in $S^+$ and false to every element in $S^-$. 
+If the algorithm can check every $c_1 \in C_1$ consistent with $S^+$ and $S^-_1$, it can then call $A_2$ to see if there is any $c_2 \in C_2$ such that $(c_1 \times c_2)$ assigns true to every element in $S^+$ and false to every element in $S^-$. \todo{be clear about difference between a set of pairs of labeled examples (such as $S^-$) and one side of that set (such as $S^-_1$)} 
 
-To efficiently find the elements of $C_1$ consistent with $S^+$ and $S^-_1$ can be accomplished by something like binary search, as shown in Algorithm \ref{recpaclearn}.
+Finding these consistent elements of $C_1$ is made easier by the fact that we can check whether partial assignments to $S^-_1$ are consistent with any concept in $C_1$. 
+As mentioned above, it starts by creating the sets $L_1$ and $L_2$ containing all samples in the first and second dimension of $S^+$, respectively.
+It then iteratively adds labeled samples from $S^-$.
+At each step, the algorithm chooses one element $(x_1, x_2) \in S^-$ at a time and checks which possible assignments to $x_1$ are consistent with $L_1$.
+If $(x_1, \bot)$ is consistent, it adds $(x_1, \bot)$ to $L_1$ and calls $RecursiveFindSubconcepts$ on $L_1$ and $L_2$.
+ \todo{just add a description saying a sample is consistent with a class when theres a concept that fits the sample}
+If $(x_1, \top)$ is consistent with $C_1$, then the algorithm adds $(x_1, \top)$ to $L_1$ and $(x_2, \bot)$ to $L_2$ and calls $RecursiveFindSubconcepts$.
+In either case, if an assignment is not consistent, no recursive call is made. 
+
+%To efficiently find the elements of $C_1$ consistent with $S^+$ and $S^-_1$ can be accomplished by something like binary search, as shown in Algorithm \ref{recpaclearn}.
 
 
 
@@ -102,75 +114,75 @@ To efficiently find the elements of $C_1$ consistent with $S^+$ and $S^-_1$ can 
 Let $C_1$ and $C_2$ be concept classes and let $A_1$ and $A_2$ be PAC-learners with runtime $A_1(\epsilon, \delta)$ and $A_2(\epsilon, \delta)$, respectively. 
 Let $C_1$ and $C_2$ have VC-dimension $d_1$ and $d_2$, respectively.
 There exists a PAC-learner for $C_1 \times C_2$ that can learn any concept using a sample of size $m = ((d_1 + d_2) \cdot log(1/\epsilon) + log(1/\delta))/\epsilon$.\todo{there are some constants in there}
-The learner requires time $O(m^d_1(A_1(1/m, log(\delta)) +  A_2(1/m, log(\delta))))$.
+The learner requires time $O(m^{d_1}(A_1(1/m, log(\delta)) +  A_2(1/m, log(\delta))))$.
 \end{theorem}
 
-
-
+\todo{testing}
 
 
 %Empirical Risk Minimization
 
 
 
-\begin{algorithm}[H]
-\label{recpaclearn}
-\SetAlgoLined
-\KwResult{Find Subconcepts Consistent with Sample}
-%\SetKwFunction{FMain}{FindSubconcepts}{}
-\SetKwProg{FMain}{FindSubconcepts}{}{}
-\SetKwProg{FRec}{RecursiveFindSubconcepts}{}{}
-
-
-\KwIn{
-$S^+$: Set of positive examples in $X_1 \times X_2$\\
-$S^-$: Set of negative examples in $X_1 \times X_2$\\
-$\delta:$ Confidence parameter in $(0,1)$
-}
- \FMain{($S^+$, $S^-$, $\delta$)}{
- $\delta' := log(\delta) / (G_{C_1}(|S|) + G_{C_2}(|S|))$\;\todo{double check this parameter}
- $\epsilon' := 1 / |S|$\;
- \tcp{$L_1$: Labelled samples in $X_1$}
- $L_1 := \{(x_1, \top) \mid \exists y,  (x_1, y) \in S^+ \}$\;
-  \tcp{$L_2$: Labelled samples in $X_2$}
- $L_2 := \{(x_2, \top) \mid \exists y,  (y, x_2) \in S^+ \}$\; 
- $U := S^-$\;
- \Return RecursiveFindSubconcepts($L_1$, $L_2$, $U$, $\epsilon'$, $\delta'$) \;
- }
-
-
+%\begin{algorithm}[H]
+%\label{recpaclearn}
+%\SetAlgoLined
+%\KwResult{Find Subconcepts Consistent with Sample}
+%%\SetKwFunction{FMain}{FindSubconcepts}{}
+%\SetKwProg{FMain}{FindSubconcepts}{}{}
+%\SetKwProg{FRec}{RecursiveFindSubconcepts}{}{}
+%
+%
 %\KwIn{
-%$L_1$: Set of labelled samples in $X_1 \times \{\bot, \top\}$\\
-%$L_2$: Set of labelled samples in $X_2 \times \{\bot, \top\}$\\
-%$U$: Set of `unlabelled' samples (known to be negative) in $(X_1 \times X_2)$\\
-%$\epsilon', \delta' \in (0,1)$
+%$S^+$: Set of positive examples in $X_1 \times X_2$\\
+%$S^-$: Set of negative examples in $X_1 \times X_2$\\
+%$\delta:$ Confidence parameter in $(0,1)$
 %}
-\FRec{($L_1$, $L_2$, $U$, $\epsilon'$, $\delta'$):}{
-
-\tcp{Run once all labels are assigned to the first dimension of $U$}
-\tcp{Attempts to find concept in $C_2$ consistent with all labels given in $L_2$}
-\If{$U = \emptyset$}{
-	\eIf{$A_2(L_2, \epsilon', \delta')$}{
-		\Return{$(A_1(L_1, \epsilon', \delta'), A_2(L_2, \epsilon', \delta'))$}\;
-	}{$\bot$\;}	
-}
-
-Get $(x_1, x_2) \in U$\;
-$U := U \backslash \{(x_1, x_2)\} $\;
-
- \tcp{Attempts to label $x_1$ as false in $c^*_1$}
-\If{$A_1(L_1 \cup \{ (x_1, \bot) \}, \epsilon', \delta') \ne \bot$}{
-	$c = RecursiveFindSubconcepts(L_1 \cup \{ (x_1, \bot) \}, L_2, U, \epsilon', \delta')$\;
-	\If{$c \ne \bot$}{\Return c\;}
-}
-
-\tcp{Attempts to label $x_1$ as true in $c^*_1$}
-\If{$A_1(L_1 \cup \{ (x_1, \top) \}, \epsilon', \delta') \ne \bot$}{
-	$c = RecursiveFindSubconcepts(L_1 \cup \{ (x_1, \top) \}, L_2 \cup \{(x_2, \bot) \}, U, \epsilon', \delta')$\;
-	\If{$c \ne \bot$}{\Return c \;}
-}
-
-}
-
+% \FMain{($S^+$, $S^-$, $\delta$)}{
+% $\delta' := \delta / (|S^-|G_{C_1}(|S^-|) + G_{C_2}(|S^-|))$\;\todo{describe this parameter}
+% $\epsilon' := 1 / |S|$\;
+% \tcp{$L_1$: Labelled samples in $X_1$}
+% $L_1 := \{(x_1, \top) \mid \exists y,  (x_1, y) \in S^+ \}$\;
+%  \tcp{$L_2$: Labelled samples in $X_2$}
+% $L_2 := \{(x_2, \top) \mid \exists y,  (y, x_2) \in S^+ \}$\; 
+% $U := S^-$\;
+% \Return RecursiveFindSubconcepts($L_1$, $L_2$, $U$, $\epsilon'$, $\delta'$) \;
+% }
+%
+%
+%%\KwIn{
+%%$L_1$: Set of labelled samples in $X_1 \times \{\bot, \top\}$\\
+%%$L_2$: Set of labelled samples in $X_2 \times \{\bot, \top\}$\\
+%%$U$: Set of `unlabelled' samples (known to be negative) in $(X_1 \times X_2)$\\
+%%$\epsilon', \delta' \in (0,1)$
+%%}
+%\FRec{($L_1$, $L_2$, $U$, $\epsilon'$, $\delta'$):}{
+%
+%\tcp{Run once all labels are assigned to the first dimension of $U$}
+%\tcp{Attempts to find concept in $C_2$ consistent with all labels given in $L_2$}
+%\If{$U = \emptyset$}{
+%	\eIf{$A_2(L_2, \epsilon', \delta')$}{
+%		\Return{$(A_1(L_1, \epsilon', \delta'), A_2(L_2, \epsilon', \delta'))$}\;
+%	}{$\bot$\;}	
+%}
+%
+%Get $(x_1, x_2) \in U$\;
+%$U := U \backslash \{(x_1, x_2)\} $\;
+%
+% \tcp{Attempts to label $x_1$ as false in $c^*_1$}
+%\If{$A_1(L_1 \cup \{ (x_1, \bot) \}, \epsilon', \delta') \ne \bot$}{
+%	$c = RecursiveFindSubconcepts(L_1 \cup \{ (x_1, \bot) \}, L_2, U, \epsilon', \delta')$\;
+%	\If{$c \ne \bot$}{\Return c\;}
+%}
+%
+%\tcp{Attempts to label $x_1$ as true in $c^*_1$}
+%\If{$A_1(L_1 \cup \{ (x_1, \top) \}, \epsilon', \delta') \ne \bot$}{
+%	$c = RecursiveFindSubconcepts(L_1 \cup \{ (x_1, \top) \}, L_2 \cup \{(x_2, \bot) \}, U, \epsilon', \delta')$\;
+%	\If{$c \ne \bot$}{\Return c \;}
+%}
+%
+%}
+%
 %\caption{Learning Disjoint Unions}
-\end{algorithm}
+%\end{algorithm}
+%\end{comment}
