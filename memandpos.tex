@@ -68,7 +68,7 @@ In the second case, as with superset queries, the algorithm checks if $x_j \in S
 \begin{algorithm}[H]
 \label{lineqalg}
 \SetAlgoLined
-\KwResult{Learn $\prod C_i $ from Equivalence (or Subset) Queries, Membership Queries, and One Positive Example}
+\KwResult{Learn $\targ \in \boxtimes C_i $}
 \For{$i = 1 \dots k$}{
 	Set $S_i$ to initial query from $A_i$
 }
@@ -107,6 +107,7 @@ Return $\prod c_i$\;
 Finally, learning from only membership queries and one positive example if fairly easy. 
 
 \begin{proposition}
+\label{memandpos}
 If $Q = \{\memQ\}$ and a single positive example $\vec{p} \in \targ$ is given, then $\targ$ is learnable in $k \cdot \sum \memCi{i}(c^*_i)$ membership queries. 
 \end{proposition}
 \begin{proof}
