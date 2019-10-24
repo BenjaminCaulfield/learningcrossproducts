@@ -1,22 +1,69 @@
+\documentclass[runningheads]{llncs}
 \include{macros}
 
-\title{Modularly Learning Cartesian-Products of Learnable Sets}
-%\author{Benjamin Caulfield \qquad Sanjit A. Seshia \\\\ Electrical Engineering and Computer Science\\ University of California, Berkeley}
-%\title{Two Authors with same Affiliation}
-\author{Benjamin Caulfield}
-\author{Sanjit A. Seshia}
-\address{Electrical Engineering and Computer Science\\ University of California, Berkeley}
-
-%\date{}                                           % Activate to display a given date or no date
+%\usepackage{graphicx}
 
 \begin{document}
-\maketitle
-%\section{}
-%\subsection{}
-
+%
+\title{Modular Learning: Independent Variables and Cartesian-Products} %\thanks{Supported by organization x.}}
+%
+%\titlerunning{Abbreviated paper title}
+% If the paper title is too long for the running head, you can set
+% an abbreviated paper title here
+%
+\author{Benjamin Caulfield\and
+Sanjit A. Seshia
+}
+%
+\authorrunning{B. Caulfield \& S. Seshia}
+% First names are abbreviated in the running head.
+% If there are more than two authors, 'et al.' is used.
+%
+\institute{University of California, Berkeley CA 94720, USA 
+\email{\{bcaulfield,sseshia\}@berkeley.edu}\\
+%\email{bcaulfield@berkeley.edu, sseshia@eecs.berkeley.edu}\\
+%\url{http://www.springer.com/gp/computer-science/lncs} \and
+}
+%
+\maketitle              % typeset the header of the contribution
+%
 \begin{abstract}
-\input{abstract}
+We define and study the problem of modular concept learning, that is, learning a concept that is a cross product of component concepts.
+If an element's membership in a concept depends solely on it's membership in the components, learning the concept as a whole can be reduced to learning the components. 
+We analyze this problem with respect to different types of oracle interfaces, defining different sets of queries.
+If a given oracle interface cannot answer questions about the components, learning can be difficult, even when the components are easy to learn with the same type of oracle queries.
+While learning from superset queries is easy, learning from membership, equivalence, or subset queries is harder. 
+However, we show that these problems become tractable when oracles are given a positive example and are allowed to ask membership queries.
+\keywords{Inductive Synthesis, Exact Learning, Active Learning}
 \end{abstract}
+
+
+
+
+
+
+
+
+
+
+
+%\title{Modular Learning: Independent Variables and Cartesian-Products}
+%%\author{Benjamin Caulfield \qquad Sanjit A. Seshia \\\\ Electrical Engineering and Computer Science\\ University of California, Berkeley}
+%%\title{Two Authors with same Affiliation}
+%\author{Benjamin Caulfield}
+%\author{Sanjit A. Seshia}
+%\address{Electrical Engineering and Computer Science\\ University of California, Berkeley}
+%
+%%\date{}                                           % Activate to display a given date or no date
+%
+%\begin{document}
+%\maketitle
+%%\section{}
+%%\subsection{}
+%
+%%\begin{abstract}
+%%\input{abstract}
+%%\end{abstract}
 
 \section{Introduction}
 \input{introduction}

@@ -28,7 +28,8 @@ $A$ must run in time polynomial in $1/\epsilon$, $1/\delta$, and $size(c)$.
 \end{definition}
 
 We will refer to $\epsilon$ as the `accuracy' parameter and $\delta$ as the `confidence' parameter.
-All PAC-learners have a \emph{sample complexity} function $m_C(\epsilon, \delta): (0,1)^2 \rightarrow \mathbb{N}$. 
+The value of $error(c)$ is the probability that for an $x$ sampled from $\dist$ that $c(x) \ne c^*(x)$. 
+ PAC-learners have a \emph{sample complexity} function $m_C(\epsilon, \delta): (0,1)^2 \rightarrow \mathbb{N}$. 
 The sample complexity is the number of samples an algorithm must see in order to probably approximately learn a concept with parameters $\epsilon$ and $\delta$.
 
 
@@ -41,15 +42,16 @@ Empirical risk minimizers are closely related to VC dimension and PAC-learnabili
 
 \begin{theorem}
 \label{fundpac}
-If the concept class $C$ has VC dimension $d$, then there is a constant $a$ such that applying an Empirical Risk Minimizer $A$ to $m_C(\epsilon, \delta)$ samples will PAC-learn in $C$, where
-\[m_C(\epsilon, \delta) \le a \frac{d \cdot log(1/\epsilon) + log(1/\delta)}{\epsilon} \]
+If the concept class $C$ has VC dimension $d$, then there is a constant, $b$, such that applying an Empirical Risk Minimizer $A$ to $m_C(\epsilon, \delta)$ samples will PAC-learn in $C$, where
+\[m_C(\epsilon, \delta) \le b \frac{d \cdot log(1/\epsilon) + log(1/\delta)}{\epsilon} \]
 \end{theorem}
 
 Finally, we will discuss the \emph{growth function}. 
 The growth function describes how many distinct assignments a concept class can make to a given set of elements.  
 More formally, for a concept class $C$ and $m \in \mathbb{N}$, the growth function $G_C(m)$ is defined by:
-\[ G_C(m) = \max_{x_1,x_2,\dots,x_m}|\{ (c(x_1), c(x_2), \dots, c(x_m)) \mid c \in C\}| \]
+\[ G_C(m) = \max_{x_1,x_2,\dots,x_m} \abs[\Big]{\{ (c(x_1), c(x_2), \dots, c(x_m)) \mid c \in C\} }\]
 
+Each $x_i$ in the above equation is taken over all possible elements of $X_i$.
 The VC-dimension of a class $C$ is the largest number $d$ such that $G_C(d) = 2^d$. 
 
 We will use the following bound, a corollary of the Perles-Sauer-Shelah Lemma, to bound the runtime of learning cross-products \cite{shalev2014understanding}. 
@@ -65,7 +67,7 @@ For any concept class $C$ with VC-dimension $d$ and $m > d+1$:
 We now have enough background to describe the strategy for PAC-learning cross-products.
 We will just describe learning the cross-product of two concepts. \todo{do we want to describe the general strategy?} 
 As above, assume concept classes $C_1$ and $C_2$ and PAC-learners $A_1$ and $A_2$ are given.
-
+We define $A_i(\epsilon, \delta)$ as the runtime of the sublearner $A_i$ to PAC-learn with accuracy parameter $\epsilon$ and confidence parameter $\delta$. 
 
 Assume that $C_1$ and $C_2$ have VC-dimension $d_1$ and $d_2$, respectively. 
 We can use the bound from van Der Vaart and Weller to get an upper bound $d$ on the VC-dimension of their cross-product.
@@ -111,15 +113,51 @@ In either case, if an assignment is not consistent, no recursive call is made.
 
 
 \begin{theorem}
-Let $C_1$ and $C_2$ be concept classes and let $A_1$ and $A_2$ be PAC-learners with runtime $A_1(\epsilon, \delta)$ and $A_2(\epsilon, \delta)$, respectively. 
-Let $C_1$ and $C_2$ have VC-dimension $d_1$ and $d_2$, respectively.
+%Let $C_1$ and $C_2$ be concept classes and let $A_1$ and $A_2$ be PAC-learners with runtime $A_1(\epsilon, \delta)$ and $A_2(\epsilon, \delta)$, respectively. 
+Let concept classes $C_1$ and $C_2$ have VC-dimension $d_1$ and $d_2$, respectively.
 There exists a PAC-learner for $C_1 \times C_2$ that can learn any concept using a sample of size $m = ((d_1 + d_2) \cdot log(1/\epsilon) + log(1/\delta))/\epsilon$.\todo{there are some constants in there}
 The learner requires time $O(m^{d_1}(A_1(1/m, log(\delta)) +  A_2(1/m, log(\delta))))$.
 \end{theorem}
 
 \todo{testing}
 
+\iffalse
+\subsection{Efficient PAC-learning with Membership Queries}
 
+Although polynomial, the complexity of PAC-learning cross-products from a $\pacQ$ oracle is fairly expensive. 
+We will show that when a learner is allowed to make membership queries, PAC-learning cross-products becomes much more efficient. 
+This is due to the previously shown technique, which uses membership queries and a single positive example to determine on which dimensions a negatively labelled example fails. 
+
+In this case, assuming that $\emptyset \in \boxtimes C_i$, we can ignore the assumption that a positive example is given. 
+If no positive example appears in a large enough labeled sample, the the algorithm can pose $\emptyset$ as the hypothesis.\todo{show that this pac-learns?}
+
+
+
+%The algorithm takes a sample $S$ of size $m_C(\epsilon, \delta)$ and uses any positive example $\vec{p} \in S$. 
+%If $S$ contains no positive example, then the algorithm can pose $\emptyset$ as the hypothesis. \todo{show that this pac-learns?}
+
+
+
+If $S$ does contain a positive example $\vec{p}$, then $S$ can be broken down into labeled samples for each dimension $i$. 
+The algorithm initialize the sets of positive and negative examples to $S^+_i := \{ \vec{x}[i] \mid  (\vec{x}, \top) \in S\}$ and $S^-_i := \{ \}$, respectively.
+For each $(\vec{x}, \bot) \in S$, a membership queries $\vec{p}[i \leftarrow \vec{x}[i]] \in \targ$. 
+If so, $\vec{x}[i] $ is added to $S^+_i$.
+Otherwise it is added to $S^-_i$.
+This labelling is correct by Observation \ref{posobs}.
+The set of labelled examples $S_i := (S_i^+ \times \{\top\}) \cup (S_i^- \times \{\bot\})$ is then passed to the sublearner $A_i$.
+$A_i$ is run on $S_i$ with accuracy parameter $\epsilon' := \epsilon / k$ and confidence parameter $\delta' := \delta / k$ \todo{DoubleCHECK THIS}.
+
+
+\begin{proposition}
+%Assume each sublearner has runtime $A_i(\epsilon, \delta)$ for accuracy and confidence parameters $\epsilon$ and $\delta$.
+The algorithm described above PAC-learns from the concept class $\boxtimes C_i$ with accuracy $\epsilon$ and confidence $\delta$.
+It makes $m_C(\epsilon, \delta)$ queries to $\pacQ$, $k \cdot m_C(\epsilon, \delta)$ membership queries, and has runtime $O(\sum A_i(\epsilon / k, \delta / k))$.
+\end{proposition}
+\begin{proof}
+After running the algorithm 
+\end{proof}
+
+\fi
 %Empirical Risk Minimization
 
 

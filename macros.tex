@@ -1,4 +1,4 @@
-\documentclass[11pt]{amsart}
+%\documentclass[11pt]{amsart}
 \usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
 \geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
 %\geometry{landscape}                % Activate for for rotated page geometry
@@ -11,6 +11,9 @@
 \usepackage[disable]{todonotes}
 %\usepackage{todonotes}
 \usepackage{multirow}
+
+\usepackage{mathtools}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}
 
 %\usepackage{authblk}
 
@@ -31,15 +34,15 @@
 
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 
-\newtheorem{theorem}{Theorem}
-\newtheorem{lemma}{Lemma}
-\newtheorem{proposition}{Proposition}
-\newtheorem{remark}{Remark}
+%\newtheorem{theorem}{Theorem}
+%\newtheorem{lemma}{Lemma}
+%\newtheorem{proposition}{Proposition}
+%\newtheorem{remark}{Remark}
 \newtheorem{observation}{Observation}
-\newtheorem{definition}{Definition}
+%\newtheorem{definition}{Definition}
 
-\theoremstyle{definition}
-\newtheorem{example}{Example}
+%\theoremstyle{definition}
+%\newtheorem{example}{Example}
 
 \newcommand{\targ}{\prod c^*_i}
 \newcommand{\dist}{\mathcal{D}}

@@ -1,7 +1,7 @@
 The previous section showed that learning cross products of membership queries requires at most $O(max_i \{ \memCi{i}(c_i) \}^k)$ membership queries. 
 A natural next question is whether this can be done for equivalence and subset queries. 
 In this section, we answer that question in the negative. 
-We will construct a class $\eqhard$ that can be learned from $n$ equivalence or membership queries but which requires at least $k^n$ queries to learn $\eqhard^k$.  
+We will construct a class $\eqhard$ that can be learned from $n$ equivalence or subset queries but which requires at least $k^n$ queries to learn $\eqhard^k$.  
 
 We define $\eqhard$ to be the set $\{ \ntreef(s) \mid s \in \mathbb{N}^* \}$, where $\ntreef(s)$ is defined as follows:
 
@@ -17,15 +17,15 @@ This implies that a subset query will return true if and only if the true concep
 Moreover, an adversarial oracle can always give a negative example for an equivalence query, meaning that oracle can give the same counterexample if a subset query were posed. 
 So we will show that $\eqhard$ is learnable from equivalence queries, implying that it is learnable from subset queries. 
 
-We we prove a lower-bound on learning $\eqhard^k$ from subset queries from an adversarial oracle. 
-An adversarial equivalence query oracle can give the exact same answers and counterexamples, implying that  $\eqhard^k$ is hard to learn from equivalence queries. 
+We will prove a lower-bound on learning $\eqhard^k$ from subset queries from an adversarial oracle. 
+This will imply that $\eqhard^k$ is hard to learn from equivalence queries, since an adversarial equivalence query oracle can give the exact same answers and counterexamples as a subset query oracle.
 
 \begin{proposition}
 There exist algorithms for learning from equivalence queries or subset queries such that any concept $\ntreef(s) \in \eqhard$ can be learned from $|s|$ queries. 
 \end{proposition}
-\begin{proof}
-(proof sketch) Algorithm \ref{ntree} shows the learning algorithm for equivalence queries, and Figure \ref{singleeqhard} show the decisions tree.  
-As mentioned above, this algorithm is essentially the same for learning from subset queries. 
+\begin{proof}\todo{flesh out this proof?}
+(sketch) Algorithm \ref{ntree} shows the learning algorithm for equivalence queries, and Figure \ref{singleeqhard} show the decision tree.  
+%As mentioned above, this algorithm is essentially the same for learning from subset queries. 
 When learning $\ntreef(s)$ for any $s \in \mathbb{N}^*$, the algorithm will construct $s$ by learning at least one new element of $s$ per query. 
 Each new query to the oracle is constructed from a string that is a substring of $s$
 If a positive counterexample is given, this can only yield a longer substring of $s$.
@@ -104,8 +104,8 @@ Set $s = \lambda$\;
 
 It is easy to learn $\eqhard$, since each new counterexample gives one more element in the target string $s$. 
 When learning a concept, $\prod \ntreef(s_i)$, it is not clear which dimension a given counterexample applies to. 
-Specifically A given counterexample $\vec{x}$ could have the property that $\vec{x}[i] \in \ntreef(s_i)$ for all $i \ne j$, but the learner cannot infer the value of this $j$. 
-It will then proceed considering all possible values of $j$, requiring exponentially more queries for longer $s_i$. \todo{is this clear?} 
+Specifically, a given counterexample $\vec{x}$ could have the property that $\vec{x}[i] \in \ntreef(s_i)$ for all $i \ne j$, but the learner cannot infer the value of this $j$. 
+It must then proceed considering all possible values of $j$, requiring exponentially more queries for longer $s_i$. \todo{is this clear?} 
 This subsection will formalize this notion to prove an exponential lower bound on learning $\eqhard^k$. 
 First, we need a couple definitions. 
 
@@ -113,7 +113,7 @@ First, we need a couple definitions.
 A concept $\prod \ntreef(s_i)$ is \emph{justifiable} if one of the following holds:
 \begin{itemize}
 \item For all $i$, $s_i = \lambda$
-\item There is an $i$ and an $a \in \mathbb{N}$ and $w \in \mathbb{N}^*$ such that $s_i = wa$, and $\ntreef(s_1) \times \dots \times \ntreef(w) \times \dots \times \ntreef(s_k)$ \todo{need flat cartesian product} was justifiably queried to the oracle and received a counterexample $\vec{x}$ such that $\vec{x}[i] = (w, a)$. 
+\item There is an $i$ and an $a \in \mathbb{N}$ and $w \in \mathbb{N}^*$ such that $s_i = wa$, and the $k$-ary cross-product $\ntreef(s_1) \times \dots \times \ntreef(w) \times \dots \times \ntreef(s_k)$ was justifiably queried to the oracle and received a counterexample $\vec{x}$ such that $\vec{x}[i] = (w, a)$. 
 \end{itemize}
 
 A concept is \emph{justifiably queried} if it was queried to the oracle when it was justifiable. 
@@ -133,6 +133,8 @@ The specific behavior of the oracle is defined as follows:
 \item The oracle never returns `yes' on any query. 
 \end{itemize}
 
+The remainder of this section assumes that queries are answered by the above oracle.
+An example of answers by the above oracle and the justifiable queries it yields is given below.
 
 \begin{example}
 \label{eqhardex}
@@ -142,7 +144,8 @@ The justifiable concepts are now $(\ntreef(1), \ntreef(\lambda))$ and $(\ntreef(
 The learner queries $(\ntreef(1), \ntreef(\lambda))$ and receives counterexample  $((1, 3), (\lambda, 4))$. 
  The learner queries $(\ntreef(\lambda), \ntreef(2))$ and receives counterexample $((\lambda, 5), (2, 6))$.
 The justifiable concepts are now  $(\ntreef(1), \ntreef(4))$, $(\ntreef(1 \cdot 3), \ntreef(\lambda))$, $(\ntreef(5), \ntreef(2))$ and $(\ntreef(\lambda), \ntreef(2 \cdot 6))$.  
-At this point, the only possible solutions constructible from strings of length $1$ are $(\ntreef(1), \ntreef(4))$ and $(\ntreef(5), \ntreef(2))$. 
+At this point, these are the only possible solutions whose sum of string lengths is $2$.
+%At this point, the only possible solutions constructible from strings of length $1$ are $(\ntreef(1), \ntreef(4))$ and $(\ntreef(5), \ntreef(2))$. 
 The graph of justifiable queries is given in Figure \ref{eqhardtree}.
 \end{example}
 
@@ -169,10 +172,10 @@ The graph of justifiable queries is given in Figure \ref{eqhardtree}.
 \node[cnode] at (-4, -2)   (10) {JQ: $(\ntreef(1),\ntreef(\lambda))$ \vspace{1mm} \\ CE: $((1, 3),(\lambda, 4))$ \vspace{2mm} };
 \node[cnode] at (3.4, -2)   (11) {JQ: $(\ntreef(\lambda),\ntreef(2))$ \vspace{1mm} \\ CE: $((\lambda, 5),(2,6))$ \vspace{1mm} };
 
-\node[cnode] at (-6, -4)   (20) {JQ: $(\ntreef(1,3),\ntreef(\lambda))$ \vspace{2mm} };
+\node[cnode] at (-6, -4)   (20) {JQ: $(\ntreef(1\cdot 3),\ntreef(\lambda))$ \vspace{2mm} };
 \node[cnode] at (-2.25, -4)   (21) {JQ: $(\ntreef(1),\ntreef(4))$ \vspace{2mm}};
 \node[cnode] at (1.5, -4)   (22) {JQ: $(\ntreef(5),\ntreef(2))$ \vspace{2mm}};
-\node[cnode] at (5.25, -4)   (23) {JQ: $(\ntreef(\lambda),\ntreef(2,6))$ \vspace{2mm}};
+\node[cnode] at (5.25, -4)   (23) {JQ: $(\ntreef(\lambda),\ntreef(2\cdot 6))$ \vspace{2mm}};
 
  \draw[edge_style]  (0) edge node[above left]{$1 \le s_1$} (10);
  \draw[edge_style]  (0) edge node[above right]{$2 \le s_2$} (11);
@@ -211,7 +214,7 @@ The following simple proposition can be proven by induction on sum of string len
 \begin{proposition}
 \label{subjust}
 Let $\prod \ntreef(s_i)$ be a justifiable concept. 
-Then for all $w_i \le s_i$, $\prod \ntreef(w_i)$ has been queried to the oracle.
+Then for all $w_1$, $w_2$, \dots, $w_k$ where for all $i$, $w_i \le s_i$, $\prod \ntreef(w_i)$ has been queried to the oracle.
 \end{proposition}
 
 \begin{proposition}
@@ -225,7 +228,7 @@ When $r=0$, the concept $\prod \ntreef(\lambda)$ is justifiable.%has been querie
 For induction, assume that there are $k^r$ justifiable queries with sum of string lengths equal to $r$. 
 By construction, the oracle will always chose counterexamples with as-yet unseen values in $\mathbb{N}$. 
 So querying each concept $\prod \ntreef(s_i)$ will yield a counterexample $\vec{x}$ where for all $i$, $\vec{x}[i] = (s_i, a_i)$ for new $a_i$.
-Then for all $i$, this query creates the justifiable concept $\prod \ntreef(s'_i)$, where $s'_j = s_j$ for all $j \ne i$ and $s'_i = \ntreef(s_i \cdot a_i)$.
+Then for all $i$, this query creates the justifiable concept $\prod \ntreef(s'_j)$, where $s'_j = s_j$ for all $j \ne i$ and $s'_i = \ntreef(s_i \cdot a_i)$.
 Thus there are $k^{r+1}$ justifiable concepts with sum of string lengths equal to $r+1$.
 \end{proof}
 
@@ -235,16 +238,16 @@ We are finally ready to prove the main theorem of this section.
 Any algorithm learning $\eqhard^k$ from subset (or equivalence) queries requires at least $k^r$ queries to learn a concept $\prod \ntreef(s_i)$, whose sum of string lengths is $r$.
 Equivalently, the algorithm takes $k^{\sum \genCi{i}}$ subset (or equivalence) queries.
 \end{theorem}
-\begin{proof}
+\begin{proof}\todo{Should I go into more detail why the existence of this c' shows the algorithm hasn't learned c?}
 Assume for contradiction that an algorithm can learn with less than $k^r$ queries and let this algorithm converge on some concept $c = \prod \ntreef(s_i)$ after less than $k^r$ queries.
 %We will construct another concept $c' = \prod \ntreef(s'_i)$ that is consistent with all given oracle answers, but whose sum of string lengths is less than $r$.
 Since less than $k^r$ queries were made to learn $c$, by Proposition \ref{numjustconc}, there must be some justifiable concept $c' = \prod \ntreef(s'_i)$ with sum of string lengths less than or equal to $r$ that has not yet been queried.
-By Proposition \ref{subjust} we can assume without loss of generality that for all $w_i \le s_i'$, $\prod \ntreef(w_i)$ has been queried to the oracle.
+By Proposition \ref{subjust}, we can assume without loss of generality that for all $w_i \le s_i'$, $\prod \ntreef(w_i)$ has been queried to the oracle.
 We will show that $c'$ is consistent with all given oracle answers, contradicting the claim that $c$ is the correct concept. 
-Let $c_v = \prod \ntreef{v_i}$ be any concept queried to the oracle, and let $\vec{x}$ be the given counterexample.
-If for all $i$, $v_i \le s'_i$, then by construction, there is an $i$ with $\vec{x}[i] = (v_i, a_i)$ such that $v_i \cdot a_i \le s'_i$, so $\vec{x}$ is a valid counterexample.
+Let $c_v := \prod \ntreef(v_i)$ be any concept queried to the oracle, and let $\vec{x}$ be the given counterexample.
+If for all $i$, $v_i \le s'_i$, then by construction, there is a $j$ with $\vec{x}[j] = (v_j, a_j)$ such that $v_j \cdot a_j \le s'_j$, so $\vec{x}$ is a valid counterexample.
 Otherwise, there is an $i$ such that $v_i \not\le s'_i$. 
-So $\{v_i\} \times \mathbb{N}  \cap \ntreef(s'_i) = \emptyset$, so $\vec{x}$ is a valid counterexample. 
+So $(\{v_i\} \times \mathbb{N})  \cap \ntreef(s'_i) = \emptyset$, so $\vec{x}$ is a valid counterexample. 
 Therefore, all counterexamples are consistent with $c'$ being correct concept, contradicting the claim that the learner has learned $c$. 
 \end{proof}
 
