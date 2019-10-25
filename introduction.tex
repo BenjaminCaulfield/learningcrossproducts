@@ -4,14 +4,19 @@
 %It is not generally possible to exactly learn these structures from just labelled examples. 
 
 Inductive synthesis or inductive learning 
-is the synthesis of programs from examples or other observations. 
+is the synthesis of programs (concepts) from examples or other observations. 
+Inductive synthesis has found application in formal methods, program analysis,
+software engineering, and related areas, for problems such as 
+invariant generation (e.g.~\cite{garg2014ice}),
+program synthesis (e.g.,~\cite{solar2006combinatorial}),
+and compositional reasoning (e.g.~\cite{cobleigh2003learning}).
 Most inductive synthesis follows the active learning model, where the
 %Therefore, researchers have introduced the active learning model, where the
 learner is allowed to make queries about the target concept to an oracle. 
 Using the correct set of oracles can result in the polynomial time learnability of otherwise unlearnable sets \cite{angluin1988queries}. 
 Recently, exact active learning has been applied to formal synthesis, where a program is automatically generated to fit a high-level specification \cite{jha2017theory}. 
-This has been particularly useful in paradigms such as 
-counter-example guided inductive synthesis \cite{solar2006combinatorial}.
+%This has been particularly useful in paradigms such as 
+%counter-example guided inductive synthesis \cite{solar2006combinatorial}.
 
 Most exact learning algorithms for synthesis are monolithic, that is, even
 if the concept (program) is made up of components, the algorithms seek to
