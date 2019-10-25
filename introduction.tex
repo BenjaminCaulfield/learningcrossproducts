@@ -28,9 +28,22 @@ if the concept (program) is made up of components, the algorithms seek to
 learn the entire concept from interaction with an oracle.
 In contrast, in this paper, we study the setting of {\em modular concept learning},
 where a learning problem is analyzed by breaking it into independent components. 
-If an element's membership in a concept depends solely on its membership in the components, learning the concept as a whole can be reduced to learning the components. 
-We study concepts that are the Cartesian products (i.e., cross-products) of their component concepts.  
-This can be thought of as learning conjunctions in that an element is part of a target concept if and only if its relevant variables are all of the component concepts. \todo{Is this clear? Should we be more explicit about the independent variable / concept class connection?}
+If an element's membership in a concept depends solely on its membership in the 
+components that make up the concept, 
+learning the concept as a whole can be reduced to learning the components. 
+We study concepts that are the Cartesian products (i.e., cross-products) of their 
+component concepts. Such concept arise in several applications: 
+(i) in invariant generation, an invariant that is the conjunction of other component
+invariants;
+(ii) in compositional reasoning, an automaton that is the product of individual automata encapsulating different aspects of an environment model, and
+(iii) in program synthesis, a product program whose state space is the product of the state spaces of individual component programs.
+%This can be thought of as learning conjunctions in that an element is part of a target concept if and only if its relevant variables are all of the component concepts. \todo{Is this clear? Should we be more explicit about the independent variable / concept class connection?}
+Modular concept learning can improve the {\em efficiency} of learning since the complexity of several
+query-based learning algorithms depends on the size of the concept (e.g. automaton) to
+be learned, and, as is well known, this can grow exponentially with the number of components.
+Besides improving efficiency of learning, from a software engineering perspective,
+modular concept learning also has the
+advantage of {\em reuse} of component learning algorithms.
 
 We will focus on the oracle queries given in Table \ref{table:queries}.
 
