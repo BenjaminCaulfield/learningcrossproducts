@@ -44,9 +44,27 @@ We will focus on the oracle queries given in Table \ref{table:queries}.
 
 \subsection{A Motivating Example}
 
-\begin{figure}
+%\begin{figure}
+%\centering
+%\begin{varwidth}{\linewidth}
+%\begin{lstlisting}
+    %int x = ??;
+    %int y = ??;
+    %int a = f(x);
+    %int b = g(y);
+    %
+    %$\Phi = \phi_1(a) \wedge \phi_2(b)$
+%\end{lstlisting}
+%\end{varwidth}
+%\caption{A simple partial program to be synthesized to satisfy a specification $\Phi$}
+%\label{sketch}
+%\end{figure}
+
+\begin{figure}[h]
 \centering
-\begin{varwidth}{\linewidth}
+%\subfloat[(a)]{
+\begin{minipage}[b]{0.4 \textwidth}
+%\begin{varwidth}{\linewidth}
 \begin{lstlisting}
     int x = ??;
     int y = ??;
@@ -55,22 +73,11 @@ We will focus on the oracle queries given in Table \ref{table:queries}.
     
     $\Phi = \phi_1(a) \wedge \phi_2(b)$
 \end{lstlisting}
-\end{varwidth}
-
-
-\caption{A simple partial program to be synthesized to satisfy a specification $\Phi$}
-\label{sketch}
-\end{figure}
-
-To illustrate the learning problem, consider the sketching problem given in Figure \ref{sketch}.
-Say we wanted to find the set of possible initial values for $x$ and $y$ that can replace the $??$ values so that the program satisfies $\Phi$.
-
-Looking at the structure of this program and specification, we can see that the correctness of these two variables are independent of each other. 
-Correct $x$ values are correct independent of $y$ and vice-versa.
-Therefore, the set of settings will be the cross product of the acceptable settings for each variable.  
-If an oracle can answer queries about correct $x$ or $y$ values separately, then the oracle can simply learn the acceptable values separately and take their Cartesian product. 
-
-\begin{figure}
+\end{minipage}
+%\label{sketch}}
+%\end{varwidth}
+\qquad
+%\subfloat[(b)]{
 \begin{tikzpicture}
      \coordinate (BL) at (0.5,0.5);
      \coordinate (TR) at (2.5,2);
@@ -87,11 +94,42 @@ If an oracle can answer queries about correct $x$ or $y$ values separately, then
       %\draw (1,1) node[draw=black, anchor=south] {.};
       %\tkzDefPoint(1,1){A};
       %\tkzLabelPoint[above](A){$(1,1)$};
-      
 \end{tikzpicture}
-\caption{The correct set of initial values for $x$ and $y$.}
+\caption{A simple partial program to be synthesized to satisfy a specification $\Phi$ (left) and the correct set of initial values for $x$ and $y$ (right).}
+\label{sketch}
 \label{sketchsolutions}
 \end{figure}
+
+To illustrate the learning problem, consider the sketching problem given in Figure \ref{sketch}.
+Say we wanted to find the set of possible initial values for $x$ and $y$ that can replace the $??$ values so that the program satisfies $\Phi$.
+
+Looking at the structure of this program and specification, we can see that the correctness of these two variables are independent of each other. 
+Correct $x$ values are correct independent of $y$ and vice-versa.
+Therefore, the set of settings will be the cross product of the acceptable settings for each variable.  
+If an oracle can answer queries about correct $x$ or $y$ values separately, then the oracle can simply learn the acceptable values separately and take their Cartesian product. 
+
+%\begin{figure}
+%\begin{tikzpicture}
+     %\coordinate (BL) at (0.5,0.5);
+     %\coordinate (TR) at (2.5,2);
+      %\draw[->] (-0.5,0) -- (3,0) node[right] {$x$};
+      %\draw[->] (0,-0.5) -- (0,3) node[above] {$y$};
+      %\draw [draw=black] (BL) rectangle (TR);
+      %\filldraw [fill=lightgray, draw=black] (BL) rectangle (TR);
+      %\draw[dashed] (0,0.5) -- (BL);
+      %\draw[dashed] (0,2) -- (0.5,2);
+      %\draw[dashed] (0.5,0) -- (BL);
+      %\draw[dashed] (2.5,0) -- (2.5,0.5);
+      %\draw(.75,1) node[anchor = west]{\textbullet $(x_1,y_1)$};
+      %\draw(1.25,2.5) node[anchor = west]{\textbullet $(x_2,y_2)$};
+      %%\draw (1,1) node[draw=black, anchor=south] {.};
+      %%\tkzDefPoint(1,1){A};
+      %%\tkzLabelPoint[above](A){$(1,1)$};
+      %
+%\end{tikzpicture}
+%\caption{The correct set of initial values for $x$ and $y$.}
+%\label{sketchsolutions}
+%\end{figure}
 
 
 If the correct values form intervals, the correct settings will look something like the rectangle shown in Figure \ref{sketchsolutions}.
