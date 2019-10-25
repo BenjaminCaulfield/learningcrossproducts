@@ -13,8 +13,9 @@ and compositional reasoning (e.g.~\cite{cobleigh2003learning}).
 Most inductive synthesis follows the query-based learning model, where the
 %Therefore, researchers have introduced the active learning model, where the
 learner is allowed to make queries about the target concept to an oracle. 
-Further, this typically falls in the setting of {\em exact learning}, where a concept (program)
-that is learned from oracle interactions must be correct -- i.e., an approximate or mostly-correct result is not enough.
+%%% commented out below since we also consider PAC learning
+%Further, this typically falls in the setting of {\em exact learning}, where a concept (program)
+%that is learned from oracle interactions must be correct -- i.e., an approximate or mostly-correct result is not enough.
 Using the correct set of oracles can result in the polynomial time learnability of otherwise unlearnable sets \cite{angluin1988queries}. 
 The special nature of query-based learning for formal synthesis, where a program is automatically generated to fit a high-level specification through interaction with oracles,
 has also been formalized \cite{jha2017theory}. 
@@ -26,7 +27,7 @@ most algorithms for inductive learning/synthesis are monolithic; that is, even
 if the concept (program) is made up of components, the algorithms seek to
 learn the entire concept from interaction with an oracle.
 In contrast, in this paper, we study the setting of {\em modular concept learning},
-where an exact-learning problem is analyzed by breaking it into independent components. 
+where a learning problem is analyzed by breaking it into independent components. 
 If an element's membership in a concept depends solely on its membership in the components, learning the concept as a whole can be reduced to learning the components. 
 We study concepts that are the Cartesian products (i.e., cross-products) of their component concepts.  
 This can be thought of as learning conjunctions in that an element is part of a target concept if and only if its relevant variables are all of the component concepts. \todo{Is this clear? Should we be more explicit about the independent variable / concept class connection?}
