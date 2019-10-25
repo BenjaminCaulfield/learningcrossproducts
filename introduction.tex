@@ -10,11 +10,12 @@ software engineering, and related areas, for problems such as
 invariant generation (e.g.~\cite{garg2014ice}),
 program synthesis (e.g.,~\cite{solar2006combinatorial}),
 and compositional reasoning (e.g.~\cite{cobleigh2003learning}).
-Most inductive synthesis follows the active learning model, where the
+Most inductive synthesis follows the query-based learning model, where the
 %Therefore, researchers have introduced the active learning model, where the
 learner is allowed to make queries about the target concept to an oracle. 
 Using the correct set of oracles can result in the polynomial time learnability of otherwise unlearnable sets \cite{angluin1988queries}. 
-Recently, exact active learning has been applied to formal synthesis, where a program is automatically generated to fit a high-level specification \cite{jha2017theory}. 
+The special nature of query-based learning for formal synthesis, where a program is automatically generated to fit a high-level specification through interaction with oracles,
+has also been formalized \cite{jha2017theory}. 
 %This has been particularly useful in paradigms such as 
 %counter-example guided inductive synthesis \cite{solar2006combinatorial}.
 
