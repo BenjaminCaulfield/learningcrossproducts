@@ -4,20 +4,30 @@
 %It is not generally possible to exactly learn these structures from just labelled examples. 
 
 Inductive synthesis or inductive learning 
-is the synthesis of programs from examples or other observations. 
-Most inductive synthesis follows the active learning model, where the
+is the synthesis of programs (concepts) from examples or other observations. 
+Inductive synthesis has found application in formal methods, program analysis,
+software engineering, and related areas, for problems such as 
+invariant generation (e.g.~\cite{garg2014ice}),
+program synthesis (e.g.,~\cite{solar2006combinatorial}),
+and compositional reasoning (e.g.~\cite{cobleigh2003learning}).
+Most inductive synthesis follows the query-based learning model, where the
 %Therefore, researchers have introduced the active learning model, where the
 learner is allowed to make queries about the target concept to an oracle. 
+%%% commented out below since we also consider PAC learning
+%Further, this typically falls in the setting of {\em exact learning}, where a concept (program)
+%that is learned from oracle interactions must be correct -- i.e., an approximate or mostly-correct result is not enough.
 Using the correct set of oracles can result in the polynomial time learnability of otherwise unlearnable sets \cite{angluin1988queries}. 
-Recently, exact active learning has been applied to formal synthesis, where a program is automatically generated to fit a high-level specification \cite{jha2017theory}. 
-This has been particularly useful in paradigms such as 
-Counter-Example Guided Inductive Synthesis \cite{solar2006combinatorial}.
+The special nature of query-based learning for formal synthesis, where a program is automatically generated to fit a high-level specification through interaction with oracles,
+has also been formalized \cite{jha2017theory}. 
+%This has been particularly useful in paradigms such as 
+%counter-example guided inductive synthesis \cite{solar2006combinatorial}.
 
-Most exact learning algorithms for synthesis are monolithic, that is, even
+In spite of this progress,
+most algorithms for inductive learning/synthesis are monolithic; that is, even
 if the concept (program) is made up of components, the algorithms seek to
 learn the entire concept from interaction with an oracle.
-In contrast, in this paper, we study the setting of modular concept learning,
-where an exact-learning problem is analyzed by breaking it into independent components. 
+In contrast, in this paper, we study the setting of {\em modular concept learning},
+where a learning problem is analyzed by breaking it into independent components. 
 If an element's membership in a concept depends solely on its membership in the components, learning the concept as a whole can be reduced to learning the components. 
 We study concepts that are the Cartesian products (i.e., cross-products) of their component concepts.  
 This can be thought of as learning conjunctions in that an element is part of a target concept if and only if its relevant variables are all of the component concepts. \todo{Is this clear? Should we be more explicit about the independent variable / concept class connection?}
@@ -25,7 +35,6 @@ This can be thought of as learning conjunctions in that an element is part of a 
 We will focus on the oracle queries given in Table \ref{table:queries}.
 
 \begin{table}
-\label{table:queries}
 \begin{center}
   \begin{tabularx}{\textwidth}{| c | c | c | X | }
     \hline
@@ -40,13 +49,32 @@ We will focus on the oracle queries given in Table \ref{table:queries}.
   \end{tabularx}
 \end{center}
 \caption{Types of queries studied in this paper.}
+\label{table:queries}
 \end{table}
 
 \subsection{A Motivating Example}
 
-\begin{figure}
+%\begin{figure}
+%\centering
+%\begin{varwidth}{\linewidth}
+%\begin{lstlisting}
+    %int x = ??;
+    %int y = ??;
+    %int a = f(x);
+    %int b = g(y);
+    %
+    %$\Phi = \phi_1(a) \wedge \phi_2(b)$
+%\end{lstlisting}
+%\end{varwidth}
+%\caption{A simple partial program to be synthesized to satisfy a specification $\Phi$}
+%\label{sketch}
+%\end{figure}
+
+\begin{figure}[h]
 \centering
-\begin{varwidth}{\linewidth}
+%\subfloat[(a)]{
+\begin{minipage}[b]{0.4 \textwidth}
+%\begin{varwidth}{\linewidth}
 \begin{lstlisting}
     int x = ??;
     int y = ??;
@@ -55,22 +83,11 @@ We will focus on the oracle queries given in Table \ref{table:queries}.
     
     $\Phi = \phi_1(a) \wedge \phi_2(b)$
 \end{lstlisting}
-\end{varwidth}
-
-
-\caption{A simple partial program to be synthesized to satisfy a specification $\Phi$}
-\label{sketch}
-\end{figure}
-
-To illustrate the learning problem, consider the sketching problem given in Figure \ref{sketch}.
-Say we wanted to find the set of possible initial values for $x$ and $y$ that can replace the $??$ values so that the program satisfies $\Phi$.
-
-Looking at the structure of this program and specification, we can see that the correctness of these two variables are independent of each other. 
-Correct $x$ values are correct independent of $y$ and vice-versa.
-Therefore, the set of settings will be the cross product of the acceptable settings for each variable.  
-If an oracle can answer queries about correct $x$ or $y$ values separately, then the oracle can simply learn the acceptable values separately and take their Cartesian product. 
-
-\begin{figure}
+\end{minipage}
+%\label{sketch}}
+%\end{varwidth}
+\qquad
+%\subfloat[(b)]{
 \begin{tikzpicture}
      \coordinate (BL) at (0.5,0.5);
      \coordinate (TR) at (2.5,2);
@@ -87,11 +104,42 @@ If an oracle can answer queries about correct $x$ or $y$ values separately, then
       %\draw (1,1) node[draw=black, anchor=south] {.};
       %\tkzDefPoint(1,1){A};
       %\tkzLabelPoint[above](A){$(1,1)$};
-      
 \end{tikzpicture}
-\caption{The correct set of initial values for $x$ and $y$.}
+\caption{A simple partial program to be synthesized to satisfy a specification $\Phi$ (left) and the correct set of initial values for $x$ and $y$ (right).}
+\label{sketch}
 \label{sketchsolutions}
 \end{figure}
+
+To illustrate the learning problem, consider the sketching problem given in Figure \ref{sketch}.
+Say we wanted to find the set of possible initial values for $x$ and $y$ that can replace the $??$ values so that the program satisfies $\Phi$.
+
+Looking at the structure of this program and specification, we can see that the correctness of these two variables are independent of each other. 
+Correct $x$ values are correct independent of $y$ and vice-versa.
+Therefore, the set of settings will be the cross product of the acceptable settings for each variable.  
+If an oracle can answer queries about correct $x$ or $y$ values separately, then the oracle can simply learn the acceptable values separately and take their Cartesian product. 
+
+%\begin{figure}
+%\begin{tikzpicture}
+     %\coordinate (BL) at (0.5,0.5);
+     %\coordinate (TR) at (2.5,2);
+      %\draw[->] (-0.5,0) -- (3,0) node[right] {$x$};
+      %\draw[->] (0,-0.5) -- (0,3) node[above] {$y$};
+      %\draw [draw=black] (BL) rectangle (TR);
+      %\filldraw [fill=lightgray, draw=black] (BL) rectangle (TR);
+      %\draw[dashed] (0,0.5) -- (BL);
+      %\draw[dashed] (0,2) -- (0.5,2);
+      %\draw[dashed] (0.5,0) -- (BL);
+      %\draw[dashed] (2.5,0) -- (2.5,0.5);
+      %\draw(.75,1) node[anchor = west]{\textbullet $(x_1,y_1)$};
+      %\draw(1.25,2.5) node[anchor = west]{\textbullet $(x_2,y_2)$};
+      %%\draw (1,1) node[draw=black, anchor=south] {.};
+      %%\tkzDefPoint(1,1){A};
+      %%\tkzLabelPoint[above](A){$(1,1)$};
+      %
+%\end{tikzpicture}
+%\caption{The correct set of initial values for $x$ and $y$.}
+%\label{sketchsolutions}
+%\end{figure}
 
 
 If the correct values form intervals, the correct settings will look something like the rectangle shown in Figure \ref{sketchsolutions}.
