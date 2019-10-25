@@ -107,6 +107,7 @@ If $(x_1, \bot)$ is consistent, it adds $(x_1, \bot)$ to $L_1$ and calls $Recurs
  \todo{just add a description saying a sample is consistent with a class when theres a concept that fits the sample}
 If $(x_1, \top)$ is consistent with $C_1$, then the algorithm adds $(x_1, \top)$ to $L_1$ and $(x_2, \bot)$ to $L_2$ and calls $RecursiveFindSubconcepts$.
 In either case, if an assignment is not consistent, no recursive call is made. 
+We can summarize these results in the following theorem.
 
 %To efficiently find the elements of $C_1$ consistent with $S^+$ and $S^-_1$ can be accomplished by something like binary search, as shown in Algorithm \ref{recpaclearn}.
 
@@ -121,7 +122,76 @@ The learner requires time $O(m^{d_1}(A_1(1/m, log(\delta)) +  A_2(1/m, log(\delt
 
 \todo{testing}
 
-\iffalse
+
+%Empirical Risk Minimization
+
+
+
+\begin{algorithm}[H]
+\label{recpaclearn}
+\SetAlgoLined
+\KwResult{Find Subconcepts Consistent with Sample}
+%\SetKwFunction{FMain}{FindSubconcepts}{}
+\SetKwProg{FMain}{FindSubconcepts}{}{}
+\SetKwProg{FRec}{RecursiveFindSubconcepts}{}{}
+
+
+\KwIn{
+$S^+$: Set of positive examples in $X_1 \times X_2$\\
+$S^-$: Set of negative examples in $X_1 \times X_2$\\
+$\delta:$ Confidence parameter in $(0,1)$
+}
+ \FMain{($S^+$, $S^-$, $\delta$)}{
+ $\delta' := \delta / (|S^-|G_{C_1}(|S^-|) + G_{C_2}(|S^-|))$\;\todo{describe this parameter}
+ $\epsilon' := 1 / |S|$\;
+ \tcp{$L_1$: Labelled samples in $X_1$}
+ $L_1 := \{(x_1, \top) \mid \exists y,  (x_1, y) \in S^+ \}$\;
+  \tcp{$L_2$: Labelled samples in $X_2$}
+ $L_2 := \{(x_2, \top) \mid \exists y,  (y, x_2) \in S^+ \}$\; 
+ $U := S^-$\;
+ \Return RecursiveFindSubconcepts($L_1$, $L_2$, $U$, $\epsilon'$, $\delta'$) \;
+ }
+
+
+%\KwIn{
+%$L_1$: Set of labelled samples in $X_1 \times \{\bot, \top\}$\\
+%$L_2$: Set of labelled samples in $X_2 \times \{\bot, \top\}$\\
+%$U$: Set of `unlabelled' samples (known to be negative) in $(X_1 \times X_2)$\\
+%$\epsilon', \delta' \in (0,1)$
+%}
+\FRec{($L_1$, $L_2$, $U$, $\epsilon'$, $\delta'$):}{
+
+\tcp{Run once all labels are assigned to the first dimension of $U$}
+\tcp{Attempts to find concept in $C_2$ consistent with all labels given in $L_2$}
+\If{$U = \emptyset$}{
+	\eIf{$A_2(L_2, \epsilon', \delta')$}{
+		\Return{$(A_1(L_1, \epsilon', \delta'), A_2(L_2, \epsilon', \delta'))$}\;
+	}{$\bot$\;}	
+}
+
+Get $(x_1, x_2) \in U$\;
+$U := U \backslash \{(x_1, x_2)\} $\;
+
+ \tcp{Attempts to label $x_1$ as false in $c^*_1$}
+\If{$A_1(L_1 \cup \{ (x_1, \bot) \}, \epsilon', \delta') \ne \bot$}{
+	$c = RecursiveFindSubconcepts(L_1 \cup \{ (x_1, \bot) \}, L_2, U, \epsilon', \delta')$\;
+	\If{$c \ne \bot$}{\Return c\;}
+}
+
+\tcp{Attempts to label $x_1$ as true in $c^*_1$}
+\If{$A_1(L_1 \cup \{ (x_1, \top) \}, \epsilon', \delta') \ne \bot$}{
+	$c = RecursiveFindSubconcepts(L_1 \cup \{ (x_1, \top) \}, L_2 \cup \{(x_2, \bot) \}, U, \epsilon', \delta')$\;
+	\If{$c \ne \bot$}{\Return c \;}
+}
+
+}
+
+\caption{Learning Disjoint Unions}
+\end{algorithm}
+%\end{comment}
+
+
+
 \subsection{Efficient PAC-learning with Membership Queries}
 
 Although polynomial, the complexity of PAC-learning cross-products from a $\pacQ$ oracle is fairly expensive. 
@@ -156,71 +226,3 @@ It makes $m_C(\epsilon, \delta)$ queries to $\pacQ$, $k \cdot m_C(\epsilon, \del
 \begin{proof}
 After running the algorithm 
 \end{proof}
-
-\fi
-%Empirical Risk Minimization
-
-
-
-%\begin{algorithm}[H]
-%\label{recpaclearn}
-%\SetAlgoLined
-%\KwResult{Find Subconcepts Consistent with Sample}
-%%\SetKwFunction{FMain}{FindSubconcepts}{}
-%\SetKwProg{FMain}{FindSubconcepts}{}{}
-%\SetKwProg{FRec}{RecursiveFindSubconcepts}{}{}
-%
-%
-%\KwIn{
-%$S^+$: Set of positive examples in $X_1 \times X_2$\\
-%$S^-$: Set of negative examples in $X_1 \times X_2$\\
-%$\delta:$ Confidence parameter in $(0,1)$
-%}
-% \FMain{($S^+$, $S^-$, $\delta$)}{
-% $\delta' := \delta / (|S^-|G_{C_1}(|S^-|) + G_{C_2}(|S^-|))$\;\todo{describe this parameter}
-% $\epsilon' := 1 / |S|$\;
-% \tcp{$L_1$: Labelled samples in $X_1$}
-% $L_1 := \{(x_1, \top) \mid \exists y,  (x_1, y) \in S^+ \}$\;
-%  \tcp{$L_2$: Labelled samples in $X_2$}
-% $L_2 := \{(x_2, \top) \mid \exists y,  (y, x_2) \in S^+ \}$\; 
-% $U := S^-$\;
-% \Return RecursiveFindSubconcepts($L_1$, $L_2$, $U$, $\epsilon'$, $\delta'$) \;
-% }
-%
-%
-%%\KwIn{
-%%$L_1$: Set of labelled samples in $X_1 \times \{\bot, \top\}$\\
-%%$L_2$: Set of labelled samples in $X_2 \times \{\bot, \top\}$\\
-%%$U$: Set of `unlabelled' samples (known to be negative) in $(X_1 \times X_2)$\\
-%%$\epsilon', \delta' \in (0,1)$
-%%}
-%\FRec{($L_1$, $L_2$, $U$, $\epsilon'$, $\delta'$):}{
-%
-%\tcp{Run once all labels are assigned to the first dimension of $U$}
-%\tcp{Attempts to find concept in $C_2$ consistent with all labels given in $L_2$}
-%\If{$U = \emptyset$}{
-%	\eIf{$A_2(L_2, \epsilon', \delta')$}{
-%		\Return{$(A_1(L_1, \epsilon', \delta'), A_2(L_2, \epsilon', \delta'))$}\;
-%	}{$\bot$\;}	
-%}
-%
-%Get $(x_1, x_2) \in U$\;
-%$U := U \backslash \{(x_1, x_2)\} $\;
-%
-% \tcp{Attempts to label $x_1$ as false in $c^*_1$}
-%\If{$A_1(L_1 \cup \{ (x_1, \bot) \}, \epsilon', \delta') \ne \bot$}{
-%	$c = RecursiveFindSubconcepts(L_1 \cup \{ (x_1, \bot) \}, L_2, U, \epsilon', \delta')$\;
-%	\If{$c \ne \bot$}{\Return c\;}
-%}
-%
-%\tcp{Attempts to label $x_1$ as true in $c^*_1$}
-%\If{$A_1(L_1 \cup \{ (x_1, \top) \}, \epsilon', \delta') \ne \bot$}{
-%	$c = RecursiveFindSubconcepts(L_1 \cup \{ (x_1, \top) \}, L_2 \cup \{(x_2, \bot) \}, U, \epsilon', \delta')$\;
-%	\If{$c \ne \bot$}{\Return c \;}
-%}
-%
-%}
-%
-%\caption{Learning Disjoint Unions}
-%\end{algorithm}
-%\end{comment}
