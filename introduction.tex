@@ -17,8 +17,10 @@ learner is allowed to make queries about the target concept to an oracle.
 %Further, this typically falls in the setting of {\em exact learning}, where a concept (program)
 %that is learned from oracle interactions must be correct -- i.e., an approximate or mostly-correct result is not enough.
 Using the correct set of oracles can result in the polynomial time learnability of otherwise unlearnable sets \cite{angluin1988queries}. 
+Using queries for software analysis is becoming increasingly popular (e.g., \cite{vaandrager17,howar2018active}).
 The special nature of query-based learning for formal synthesis, where a program is automatically generated to fit a high-level specification through interaction with oracles,
 has also been formalized \cite{jha2017theory}. 
+
 %This has been particularly useful in paradigms such as 
 %counter-example guided inductive synthesis \cite{solar2006combinatorial}.
 
@@ -45,7 +47,12 @@ Besides improving efficiency of learning, from a software engineering perspectiv
 modular concept learning also has the
 advantage of {\em reuse} of component learning algorithms.
 
-We will focus on the oracle queries given in Table \ref{table:queries}.
+We will focus on the oracle queries given in Table \ref{table:queries} and show several results, including both upper and lower bounds. 
+We show learning cross-products from superset queries is no more difficult than learning each individual concept. 
+Learning cross-products from equivalence queries or subset queries is intractable, while learning from just membership queries is polynomial, though somewhat expensive. 
+We show that when a learning algorithm is allowed to make membership queries and is give a single positive example, previously intractable problems become tractable. 
+We show that learning the disjoint unions of sets is easy.
+Finally, we discuss the computational complexity of PAC-learning and show how it can be improved when membership queries are allowed. 
 
 \begin{table}
 \begin{center}
