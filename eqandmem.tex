@@ -1,0 +1,249 @@
+This section investigates the learning of cross-products when the subclasses are learnable from equivalence and membership queries. \todo{use $Q = \{\}$ notation?}  This set of queries is particularly important as it is needed in the widely used $L^*$ algorithm by Angluin for the learning of finite automata \cite{angluin1987learning}. \todo{this algorithm is used in ...} Additional classes that are learnable from these queries include boolean decision trees \cite{bshouty1993exact}, unions of higher-dimensional boxes \cite{goldberg1994learning}, and sparse multivariate boolean polynomials \cite{schapire1993learning}.
+
+
+
+\subsection{Learning With a Positive Example}
+
+\begin{algorithm}[H]
+\label{eqmemandpos}
+\SetAlgoLined
+\KwResult{Learn Concept from Equivalence Queries, Membership Queries and One Positive Example}
+%\SetKwFunction{FMain}{FindSubconcepts}{}
+\SetKwProg{FMain}{Learn}{}{}
+%\SetKwProg{FRec}{RecursiveFindSubconcepts}{}{}
+
+
+\KwIn{
+$\vec{p}$: Positive Example in X
+}
+ \FMain{($\vec{p}$)}{
+ 
+ \While{some $A_i$ has not completed}{
+ 	\For{each $A_i$ }{
+		\tcp{Answer $\memQ$ queries until an $\eqQ$ query is made}
+		\While{$A_i$ queries $x_i \in C_i$ for some $x_i$}{
+			Query $\vec{p}[i \leftarrow x_i] \in \targ$\;
+			Return answer to $A_i$\;
+		}
+		Receive query $S_i = c_i^*$  from $A_i$\;
+	}
+	Query $\prod S_i = \targ$\;
+	\If{$\prod S_i = \targ$}{
+		\Return $\prod S_i$\;
+	}
+	\Else{
+		Receive counterexample $\vec{x} := (x_1, \dots, x_k)$\;
+	}
+	\If{$\vec{x} \in \prod S_i$}{
+		\For{$i \in \{1, \dots, k\}$}{
+			Query $\vec{p}[i \leftarrow x_i] \in \targ$\;
+			\If{$\vec{p}[i \leftarrow x_i] \not\in \targ$}{
+				Pass $x_i$ to $A_i$ as a counterexample\;
+			}
+		}
+	}
+	\Else{
+	\tcp{$\vec{x} \in \targ \backslash \prod S_i$}
+		\For{$i \in \{1, \dots, k\}$}{
+			\If{$x_i \not\in S_i$}{
+				Pass $x_i$ to $A_i$ as a counterexample\; 
+			}
+		} 
+	}
+ }
+ \Return $\prod S_i$\;
+}
+
+\caption{Learn Concept from Equivalence Queries, Membership Queries and One Positive Example}
+\end{algorithm}
+
+\begin{proposition}
+If $Q = \{\memQ, \eqQ\}$ and a single positive example $\vec{p} \in \targ$ is given, then $\targ$ is learnable in $k \cdot \sum \eqCi{i}(c^*_i) + \sum \memCi{i}(c^*_i)$ membership queries and $\sum \eqCi{i}(c^*_i)$ equivalence queries. 
+\end{proposition}
+\begin{proof}
+The learning algorithm is described in Algorithm \ref{eqmemandpos}.
+The algorithm uses the positive example to answer membership queries.
+By Observation \ref{posobs}, for any membership query $x_i$ made by $A_i$, $x_i \in c^*_i$ if and only if $\vec{p}[i \leftarrow x_i]\in \targ$.
+So each membership query posed by an $A_i$ is answered with one membership query posed by the cross-product learner. 
+
+Membership queries are answered until each $A_i$ poses an equivalence query $S_i = c^*_i$ (if $A_i$ has terminated with the correct answer, we just assume $S_i$ equals $c^*_i$).
+The learning algorithm then queries $\prod S_i = \targ$ and receives a counterexample $\vec{x} := (x_1, \dots, x_k)$ or it receives a `yes' and terminates.
+The algorithm checks if $\vec{x}  \in \prod S_i$ and handles each case seperately.
+
+\underline{If $\vec{x}  \in \prod S_i$}: then $\vec{x} \in (\prod S_i) \backslash \targ$. 
+So there is an $i$ such that $x_i \not\in c^*_i$.
+The algorithm finds this $i$ by checking if $\vec{p}[i \leftarrow x_i]\in \targ$ for all $i$. 
+Since $\vec{x} \in \prod S_i$, $x_i \in S_i \backslash c^*_i$, so $x_i$ is passed to $A_i$ as a counterexample to the query $S_i = c^*_i$.
+This takes at most $k$ membership queries.
+
+\underline{If $\vec{x}  \not\in \prod S_i$}: then $\vec{x} \in \targ \backslash  \prod S_i$, since it is a counterexample. 
+So there is an $i$ such that $x_i \not\in S_i$.
+Since the algorithm has access to each $S_i$, it can check this explicitly without using any counter-examples. 
+
+In either case, at least one $A_i$ receives a counterexample to its equivalence query, so this process is done at most $\sum \eqCi{i}(c^*_i)$ times, using at most $k$ membership queries per process. 
+This yields the stated bound on query complexity. 
+\end{proof}
+
+
+\subsection{Learning Without a Positive Example}
+
+
+
+\begin{algorithm}[H]
+\label{eqmemnopos}
+\SetAlgoLined
+%\SetKwFunction{FMain}{FindSubconcepts}{}
+\SetKwProg{FMain}{FindPos}{()}{ho} \todo{better name than "Learn"?}
+%\SetKwProg{FRec}{RecursiveFindSubconcepts}{}{}
+
+ \FMain{}{
+ \If{$\emptyset \in C$}{
+ 	Query $\emptyset = \targ$\;
+	\Return counterexample\;
+ }
+ Initialize all $T_i := \emptyset$\;
+ \While{True}{
+ 	 \For{$i \in \{1,\dots,k\}$}{
+	 	Get Query from $A_i$\;
+		\If{No possible query}{
+			Pass \;
+		}
+		\If{$A_i$ queries $x_i \in c^*_i$}{
+			Add $x_i$ to $T_i$\;
+			Pass ``False" to $A_i$\;
+		} \Else{
+			$A_i$ queries $S_i = c^*_i$\;
+			Sample $y_i \in S_i$\;
+			Pass $y_i$ as counterexample to $A_i$\;
+			Add $y_i$ to $T_i$\;
+		}	
+ 	}
+	\For{Unqueried $\vec{y} \in \prod T_i$}{
+		Query $\vec{y} \in \targ$\;
+		\If{$\vec{y} \in \targ$}{
+			\Return $\vec{y}$\;
+		}
+	}
+ }
+ 
+ %Are we always just finding a positive example??? Or just stumbling on the right set of concepts? %\Return $\prod S_i$\;
+}
+
+\caption{Finds positive example when $A_i$ are learnable from Equivalence and Membership queries. }
+\end{algorithm}
+
+\begin{proposition}
+If $Q = \{\memQ, \eqQ\}$, then Algorithm \ref{eqmemnopos} can find a positive example using  $max_i \{ (\memCi{i}(c^*_i)  + \eqCi{i}(c^*_i))\}^k$ membership queries and at most one equivalence query.
+\end{proposition}
+\begin{proof}
+	For ease of explanation, we assume that every sublearner will query $S_i = c^*_i$ before returning the hypothesis $S_i$. 
+	
+	Since the algorithm might give inconsistent answers to the sublearners, there is no guarantee that $A_i$ can always give a new query. 
+	This is handled in the case marked "If no possible query" in the algorithm. 
+	
+	At the start of the algorithm, if the concept class includes the empty concept, the algorithm queries $\emptyset = \targ$. 
+	If $\emptyset = \targ$, the concept is learned. 
+	Otherwise, some positive counter-example from $\targ$ must be given. 
+	The rest of the algorithm then assumes that $\empty$ is not a valid hypothesis. 
+	
+	The remaining part of the algorithm simulates each $A_i$ in parallel until every $T_i$ contains an element of $c^*_i$.
+	At this point, the algorithm will stop, since all possible elements of $\prod T_i$ are posed as membership queries.
+	
+	For each $A_i$, either every answer to a query from $A_i$ is correct or at least one answer is incorrect.
+	We will discuss each case separately. 
+	\underline{Every answer is correct}: In this case $A_i$ will eventually query the correct hypothesis $c^*_i$. 
+	Since $c^*_i \ne \emptyset$, some element of $c^*_i$ will then be added to $T_i$.
+	\underline{Some answer to $A_i$ is incorrect}: If an incorrect answer to a membership query is given, then for some query $x_i \in c^*_i$, the answer ``False'' is incorrect. 
+	So $x_i \in c^*_i$ and $T_i$ will contain a positive example. 
+	If an incorrect answer to an equivalence query is given, either the counter-example is incorrect or the statement that they are not equivalent is incorrect. 
+	If an incorrect counterexample $y_i$ to the query $S_i = c^*_i$ is given, then  $y_i \in c^*_i$, since we already know $y_i \in S_i$. 	
+	If the statement $S_i \ne c^*_i$ is incorrect, then some element of $c^*_i$ will then be added to $T_i$.
+	
+	The algorithm adds at most one element to $T_i$ per query and must stop once every $A_i$ has made enough queries to learn $c^*_i$, yielding the stated bound.
+	
+\end{proof}
+
+Unlike the other algorithms in this paper, this algorithm assumes that an element from each hypothesis can be sampled. 
+There might not be an efficient algorithm for this sampling (e.g., if the concept class is NP-hard).
+However, this sampling will likely be more efficient than checking the equivalence of two concepts. 
+Since the total number of samples from this algorithm is $k \cdot max_i\{ EQ_i(c^*_i) \}$, this sampling requirement is not too restrictive.
+
+
+\subsection{Learning Automata Revisited}
+The following proposition shows how such languages can be related to the cross-product of their projections.
+%write more.
+
+\begin{proposition}
+For any finite alphabet $\Sigma$ and formal language $L \subseteq \Sigma^*$  and partition $P = \{ \Sigma_1, \dots, \Sigma_k\}$ on $\Sigma$. 
+If $P$ act independently on $L$, then for any $s \in \Sigma^*$, $(\pi_{\Sigma_1}(s), \dots, \pi_{\Sigma_k}(s)) \in \prod \pi_{\Sigma_i}(L)$ if and only if $s \in L$.
+\end{proposition}
+
+
+An algorithm to learn these cross-products can be constructed from any oracle answering questions about the language $L$.
+Each query about cross-products is translated to an equivalent query about $L$.
+The query $(s_1,\dots, s_k) \in \prod \pi_{\Sigma_i}(L)$ is translated to $s_1 \cdot \dots \cdot s_k \in L$. 
+To answer the query  $\prod L_i = \prod \pi_{\Sigma_i}(L)$, let $L'$ be the largest set in $\Sigma$ such that for all $i$, $\pi_{\Sigma_i}(L) = L_i$.
+To construct this set, let $M_i$ be the automaton accepting each $L_i$. 
+For each $M_i$ add self-loops to each state labelled with the characters in $\Sigma \backslash \Sigma_i$.
+The intersection of the resulting languages is the set $L'$, and $\prod L_i = \prod \pi_{\Sigma_i}(L)$ if and only if $L' = L$. \todo{prove this in an appendix?}
+These constructions can also be used to answer subset, superset, and example queries. 
+
+
+%\begin{algorithm}[H]
+%\label{eqmemnopos}
+%\SetAlgoLined
+%\KwResult{Learn Concept from Equivalence Queries, Membership Queries and One Positive Example}
+%%\SetKwFunction{FMain}{FindSubconcepts}{}
+%\SetKwProg{FMain}{Learn}{}{} \todo{better name than "Learn"?}
+%%\SetKwProg{FRec}{RecursiveFindSubconcepts}{}{}
+%
+% \FMain{()}{
+% \For{$i \in \{1,\dots,k\}$}{
+% 		Initialize $T_i = \emptyset$\;
+%		Set $\lastq{i}$ equal to query from $A_i$\; \todo{figure out better representation for $\lastq{i}$}
+%	}
+% \While{some $A_i$ has not completed}{
+% 	
+%	\If{all $\lastq{i}$ are $\eqQ$ queries}{
+%		\For{$i \in \{1,\dots,k\}$}{
+%			Sample $y_i$ from $\lastq{i}$\;
+%			Add $y_i$ to $T_i$\;
+%		}
+%		
+%		Query $\prod \lastq{i} = \targ$\;
+%		\If{$\prod \lastq{i} = \targ$}{
+%			\Return $\prod \lastq{i}$\;
+%		} \Else{
+%			Receive counterexample $\vec{x} := (x_1, \dots, x_k)$\;
+%		}
+%		\If{$\vec{x} \not\in \prod \lastq{i}$}{
+%			Run Algorithm \ref{eqmemandpos} with positive example $\vec{x}$\;
+%		}\Else{
+%			Pass $x_i$ as a counterexample to $A_i$\; \todo{say may be false / it's a ce to q_i = c^*_i ?}
+%			Add $x_i$ to $T_i$\;
+%			Set $\lastq{i}$ to new query from $A_i$\;
+%		}
+%		
+%	
+%	}
+%	
+%	
+%	
+%	\For{$i \in \{1, \dots, k\}$}{
+%		\If{$\lastq{i}$ is $\memQ$ query}{
+%			Add $\lastq{i}$ to $T_i$\;
+%			Set $\lastq{i}$ to new query from $A_i$\;
+%		}
+%	}
+%	\For{$\vec{y} \in \prod T_i$}{
+%		Query $\vec{y} \in \targ$\;
+%		\If{$\vec{y} \in \targ$}{
+%			Run Algorithm \ref{eqmemandpos} with positive example $\vec{y}$\;
+%		}
+%	}
+% }
+% %Are we always just finding a positive example??? Or just stumbling on the right set of concepts? %\Return $\prod S_i$\;
+%}
+%
+%\caption{Learn Concept from Equivalence and Membership Queries  (No Positive Examples)}
+%\end{algorithm}

@@ -186,7 +186,7 @@ $U := U \backslash \{(x_1, x_2)\} $\;
 
 }
 
-\caption{Learning Disjoint Unions}
+\caption{PAC Learning}
 \end{algorithm}
 %\end{comment}
 
@@ -198,7 +198,7 @@ Although polynomial, the complexity of PAC-learning cross-products from a $\pacQ
 We will show that when a learner is allowed to make membership queries, PAC-learning cross-products becomes much more efficient. 
 This is due to the previously shown technique, which uses membership queries and a single positive example to determine on which dimensions a negatively labelled example fails. 
 
-In this case, assuming that $\emptyset \in \boxtimes C_i$, we can ignore the assumption that a positive example is given. 
+In this case, assuming that $\emptyset \in \Boxtimes C_i$, we can ignore the assumption that a positive example is given. 
 If no positive example appears in a large enough labeled sample, the the algorithm can pose $\emptyset$ as the hypothesis.\todo{show that this pac-learns?}
 
 
@@ -220,7 +220,7 @@ $A_i$ is run on $S_i$ with accuracy parameter $\epsilon' := \epsilon / k$ and co
 
 \begin{proposition}
 %Assume each sublearner has runtime $A_i(\epsilon, \delta)$ for accuracy and confidence parameters $\epsilon$ and $\delta$.
-The algorithm described above PAC-learns from the concept class $\boxtimes C_i$ with accuracy $\epsilon$ and confidence $\delta$.
+The algorithm described above PAC-learns from the concept class $\Boxtimes C_i$ with accuracy $\epsilon$ and confidence $\delta$.
 It makes $m_C(\epsilon, \delta)$ queries to $\pacQ$, $k \cdot m_C(\epsilon, \delta)$ membership queries, and has runtime $O(\sum A_i(\epsilon / k, \delta / k))$.
 \end{proposition}
 %\begin{proof}

@@ -19,9 +19,9 @@ If a positive example is found, the learner can then run the simple algorithm fr
 Algorithm \ref{memonlyalg} will terminate after making $O(max_i \{ \memCi{i}(c^*_i) \}^k)$ queries.
 \end{proposition}
 \begin{proof}
-The algorithm works by constructing sets $S_i$ of elements and querying all possible elements of $\prod S_i$. 
-We will get our bound of $O(max_i \{ \memCi{i}(c^*_i) \}^k)$ by showing the algorithm will find a positive example once $| S_i | > max_i \{ \memCi{i}(c^*_i) \}$ for all $i$. 
-Since the algorithm queries all possible elements of $\prod S_i$, it is sufficient to prove that $S_i$ will contain an element of $c^*_i$ once $|S_i| > \memCi{i}(c^*_i)$.
+The algorithm works by constructing sets $T_i$ of elements and querying all possible elements of $\prod T_i$. 
+We will get our bound of $O(max_i \{ \memCi{i}(c^*_i) \}^k)$ by showing the algorithm will find a positive example once $| T_i | > max_i \{ \memCi{i}(c^*_i) \}$ for all $i$. 
+Since the algorithm queries all possible elements of $\prod T_i$, it is sufficient to prove that $T_i$ will contain an element of $c^*_i$ once $|T_i| > \memCi{i}(c^*_i)$.
 We will now show this is true for each $i$.
 
 Assume that the sublearner $A_i$ eventually terminates with the correct answer $c^*_i$. 
@@ -32,11 +32,11 @@ We will consider the cases when $c^*_i = N_i$ and $c^*_i \ne N_i$
 
 Assume $c^*_i = N_i$: Then by our assumption that $\targ \ne \emptyset$, $N_i$ contains some element $n_i$. 
 Note that although sampling elements from a set might be expensive in general, this is only done for $N_i$ and can therefore be hard-coded into the learning algorithm. 
-The algorithm will start with $S_i := \{n_i\}$, so $S_i$ contains an element of $c^*_i$ at the start of the algorithm. 
+The algorithm will start with $T_i := \{n_i\}$, so $T_i$ contains an element of $c^*_i$ at the start of the algorithm. 
 
 Assume $c^*_i \ne N_i$: By our assumption that $A_i$ eventually terminates, $A_i$ must eventually query some $q_j^i \in c^*_i$ (Otherwise, $A_i$ would only receive negative answers and would output $N_i$). 
-So after $j$ steps, $S_i$ contains some element of $c^*_i$.
-Since $j < \memCi{i}(c^*_i)$, we have that $S_i$ contains a positive example once $| S_i | > \memCi{i}(c^*_i)$, completing the proof.  
+So after $j$ steps, $T_i$ contains some element of $c^*_i$.
+Since $j < \memCi{i}(c^*_i)$, we have that $T_i$ contains a positive example once $| T_i | > \memCi{i}(c^*_i)$, completing the proof.  
 \end{proof}
 
 
@@ -50,9 +50,9 @@ Since $j < \memCi{i}(c^*_i)$, we have that $S_i$ contains a positive example onc
 %\KwResult{Learning with Membership Queries Only}
 \For{$i = 1 \dots k$}{
 	\eIf{$N_i$ and $n_i$ exist}{
-		Set $S_i := \{n_i\}$\;
+		Set $T_i := \{n_i\}$\;
 	}{
-		Set $S_i := \{ \}$\; 
+		Set $T_i := \{ \}$\; 
 	}
 }
 Set $j := 0$\;
@@ -61,13 +61,13 @@ Set $j := 0$\;
 		\If{$A_i$ has not terminated}{
 			Get query $q_j^i$ from $A_i$ \;
 			Pass answer `no' to $A_i$\; 
-			Set $S_i := S_i \cup \{q_j^i\}$\;
+			Set $T_i := T_i \cup \{q_j^i\}$\;
 		}
 		%\If{ $|\vec{q_i}| \ge j$ }{
 		%	
 		%}
 	}
-  \For{$\vec{x} \in \prod S_i$}{
+  \For{$\vec{x} \in \prod T_i$}{
   	Query $\vec{x} \in \targ$\;
 	\If{$\vec{x} \in \targ$}{
 		Run Proposition \ref{memandpos} algorithm using $\vec{x}$ as a positive example\;	

@@ -22,7 +22,7 @@ Like all positive results in this paper, this is accomplished by algorithm that 
 If $Q = \{ \supQ \}$, then there is an algorithm that learns any concept $\targ \in \prod C_i $ in $\sum \supCi{i}(c^*_i)$ queries.  
 \end{proposition}
 \begin{proof}
-Algorithm \ref{supalg} learns $\boxtimes C_i $ by simulating the learning of each $A_i$ on its respective class $C_i$. 
+Algorithm \ref{supalg} learns $\Boxtimes C_i $ by simulating the learning of each $A_i$ on its respective class $C_i$. 
 The algorithm asks each $A_i$ for superset queries $S_i \supseteq c_i^*$, queries the product $\prod S_i$ to the oracle, and then uses the answer to answer at least one query to some $A_i$. \todo{should there be a special symbol for queries instead of just $\supseteq$}
 Since at least one $A_i$ receives an answer for each oracle query, at most $\sum \supCi{i}(c^*_i)$ queries must be made in total. 
 

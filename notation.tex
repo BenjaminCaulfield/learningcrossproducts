@@ -18,8 +18,8 @@ We write $\prod S_i$ or $S_1 \times \dots \times S_k$ to refer to the $k$-ary Ca
 We use $S^k$ to refer to $\prod_{i=1}^k S$. 
 
 We use vector notation $\vec{x}$ to refer to a vector of elements $(x_1,\dots, x_k)$, $\vec{x}[i]$ to refer to $x_i$, and $\vec{x}[i \leftarrow x'_i]$ to refer to $\vec{x}$ with $x'_i$ replacing value $x_i$ at position $i$. 
-We define $\boxtimes^k_{i=1} C_i := \{ \prod c_i \mid c_i \in C_i, i \in \{1,\dots,k\} \}$. \todo{replace products of sets with $\boxtimes$}
-We write $\vec{c}$ or $\prod c_i$ for any element of $\boxtimes^k_{i=1} C_i $ and will often denote $\vec{c}$ by $(c_1, \dots, c_k)$ in place of $\prod c_i$. 
+We define $\Boxtimes^k_{i=1} C_i := \{ \prod c_i \mid c_i \in C_i, i \in \{1,\dots,k\} \}$. %\todo{replace products of sets with $\Boxtimes$}
+We write $\vec{c}$ or $\prod c_i$ for any element of $\Boxtimes^k_{i=1} C_i $ and will often denote $\vec{c}$ by $(c_1, \dots, c_k)$ in place of $\prod c_i$. 
 The target concept will be represented as $c^*$ or $\targ$ which equals $(c^*_1, \dots, c^*_k)$.
 
 \todo{mention representations}
@@ -30,7 +30,7 @@ The target concept will be represented as $c^*$ or $\targ$ which equals $(c^*_1,
 
 The results below answer the following question:
 \begin{quote}
-For different sets of queries $Q$, what is the bound on the number of queries to learn a concept in $\boxtimes C_i $ as a function of each $\genCi{i}$ for each $q \in Q$?
+For different sets of queries $Q$, what is the bound on the number of queries to learn a concept in $\Boxtimes C_i $ as a function of each $\genCi{i}$ for each $q \in Q$?
 \end{quote}
 %For what set of queries $Q$ does the learnability of each $C_i$ imply the learnability of $\prod C_i $ and how does the number of queries to learn $\prod C_i $ increase as a function of each $\genCi{i}$ for each $q \in Q$?
 

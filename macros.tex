@@ -11,6 +11,9 @@
 \usepackage[disable]{todonotes}
 %\usepackage{todonotes}
 \usepackage{multirow}
+\usepackage{relsize}
+\usepackage{graphicx}
+
 
 \usepackage{subfig}
 \usepackage{mathtools}
@@ -46,7 +49,8 @@
 %\theoremstyle{definition}
 %\newtheorem{example}{Example}
 
-\newcommand{\targ}{\prod c^*_i}
+\newcommand{\targ}{c^*}
+%\newcommand{\targ}{\prod c^*_i}
 \newcommand{\dist}{\mathcal{D}}
 
 \newcommand{\genQ}{q}
@@ -57,6 +61,8 @@
 \newcommand{\supQ}{\emph{Sup}}
 \newcommand{\eqQ}{\emph{EQ}}
 \newcommand{\pacQ}{\emph{EX}}
+
+\newcommand{\lastq}[1]{q_{#1}}
 
 \newcommand{\genQi}[1]{q_{#1}}
 \newcommand{\oneposQi}[1]{\emph{1}Pos_{#1}}
@@ -103,6 +109,12 @@
 
 
 \newcommand{\VC}{\mathcal{V}\mathcal{C}}
+
+
+%\newcommand{\Cprod}{\mathpalette\superimpose{{\box}{\times}}
+\newcommand{\Cprod}{\mathclap{\box}\times}
+%\newcommand{\Boxtimes}{\scalebox{3}{\boxtimes}}
+\newcommand{\Boxtimes}{\mathlarger{\mathlarger{\boxtimes}}}
 
 
 

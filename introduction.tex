@@ -72,7 +72,7 @@ Finally, we discuss the computational complexity of PAC-learning and show how it
 \label{table:queries}
 \end{table}
 
-\subsection{A Motivating Example}
+\subsection{Introductory Example}
 
 %\begin{figure}
 %\centering
@@ -170,6 +170,102 @@ However, this does not apply to negative examples, such as $(x_2, y_2)$ in the f
 In this example, $x_2$ is in its target interval, but $y_2$ is not. 
 The learner has no way of knowing which subconcept a negative element fails on.
 Handling negative counterexamples is one of the main challenges of this paper.
+
+
+\subsection{Motivating Example: Learning Automata on Independent Alphabets}
+
+The algorithms presented in Sections \ref{eqandmem} and \ref{paclearning} can be applied to the learning of finite automata.
+
+%This subsection will define this problem, show how it could appear in real applications, 
+
+%Define projection and independence
+
+
+Given a finite set of alphabet $\Sigma$, a set $\Gamma \subseteq \Sigma$,  and a string $s \in \Sigma^*$, the projection of $s$ to $\Gamma$, written $\pi_\Gamma(s)$ is formed by removing all symbols from $s$ that are not in $\Gamma$. 
+More formally, for the empty string $\lambda$, $\pi_\Gamma(\lambda) = \lambda$. 
+For all $t \in \Sigma^*$ and $a \in \Sigma$, $\pi_\Gamma(ta) = \pi_\Gamma(t)a$ if $a \in \Gamma$ and $\pi_\Gamma(ta) = \pi_\Gamma(t)$ if $a \not\in \Gamma$.
+
+Projection can be extended to languages $L \subseteq \Sigma^*$ by $\pi_\Gamma(L) := \{ \pi_\Gamma(s) \mid s\in L\}$. 
+
+\begin{definition}
+Let $\Sigma$ be a finite alphabet and let $P = \{\Sigma_1, \dots, \Sigma_k\}$ be a partitioning of $\Sigma$ into disjoint subsets. 
+We say $P$ is independent on the language $L \subseteq \Sigma^*$ if for each $s \in \Sigma^*$, $s\in L$  if and only if for all $i \in \{1, \dots, k\}$, $\pi_{\Sigma_i}(s) \in  \pi_{\Sigma_i}(L)$.
+\end{definition}
+
+To understand this definition, consider the following example.
+Let $|s|_a$ be the number of occurrences of a character $a$ in the string $s$ (similar for $b$).
+Define $L := \{ s \mid |s|_a \equiv 0 \mbox{ mod } 2  \mbox{ and } |s|_b \equiv 0 \mbox{ mod } 3 \}$ for $L \subseteq \{a, b\}^*$.
+Then the partition $P = \{ \{a \}, \{b\} \}$ acts independently on $L$.
+%We can think of the language $L$ as being composed of two languages, $\pi_\{a\}(L)$ and $\pi_\{b\}(L)$.
+
+
+
+%This suggests a strategy for learning 
+\subsubsection{Applications to Learning Automata}
+
+Consider, for example, an automaton representing the proper input/output interactions of a simple vehicle. 
+Say the vehicle can be split into two systems: the headlights and the motor controls. 
+
+It may be reasonable to assume that these two systems act independently. 
+So the correct input/output sequence for motor controls is true regardless of the state of the headlights, and vice-versa. 
+This allows us to make inferences like ``The brakes should always activate after the brake pedal is pushed, regardless of whether the high-beams are on". 
+
+
+
+
+
+
+
+
+
+%We will formalize this notion of independence and show how it relates to cross-products.
+
+% No break until you write this:
+
+
+Now consider the problem of learning this automaton from oracle interactions or labelled data. 
+If the labels and oracle answer are subsystem-specific (e.g.,  ``The headlights are incorrect in this example"), then it might be possible to learn each subsystem separately.
+
+But there are a few reasons why this subsystem-specific feedback might not be possible:
+\begin{enumerate}
+\item If the oracle answers queries by running simulations, it might not be obvious which subsystem is responsible for the fault.
+(e.g., ``Did the car crash because the high-beams were on or because the breaks didn't function correctly?")
+\item When only learning from labelled examples, the data might not include this subsystem information. 
+\item The oracle may be implemented by an existing model which does not have this subsystem information.
+\end{enumerate}
+
+
+This last case might be relevant in system deobfuscation, where black-box queries are made to a complex model in order to learn a simple representation of that model. 
+That simpler representation might be used to explain the model to a human or it might be checked against a logical specification. 
+
+In particular, recent work has focused on using Angluin's algorithm to learn finite automata from RNNs \cite{weiss2017extracting}.  
+If the RNN could be split into independent subsystems, but was not trained on data with subsystem-specific information, then a naive application of Angluin's algorithm would require learning the product automaton.
+
+If the headlights-automaton has $n$ states and the motor control automaton has $m$ states, then the product of these two automata might be of size $mn$.  \todo{is taking the product of two automata on different alphabets the same as looking at independent alphabets?}
+Learning this product automaton from Angluin's algorithm would require $O(mn)$ equivalence queries.
+However,  we can leverage the learning algorithms from this paper to learn the same automaton in $O(m+n)$ equivalence queries. \todo{describe how in more detail, mention that it still takes $O(mn)$ time}
+
+%In general, given $k$ automata on disjoint alphabets with number of states $n_1, \dots, n_k$, learning the product of those automata would require 
+
+
+
+%car system
+%
+%For equivalence checking: Run a simulation and see if an accident occurs. Don't know which part of the cars controls failed. 
+%
+%reinforcement learning: 0/1
+%
+%Deobfuscating an existing system
+%Learning from NN
+%
+%In the PAC-learning case, only have existing set of data and can't get new queries. 
+%
+%
+%
+%
+
+
+
 
 
 

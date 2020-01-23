@@ -68,7 +68,7 @@ In the second case, as with superset queries, the algorithm checks if $x_j \in S
 \begin{algorithm}[H]
 \label{lineqalg}
 \SetAlgoLined
-\KwResult{Learn $\targ \in \boxtimes C_i $}
+\KwResult{Learn $\targ \in \Boxtimes C_i $}
 \For{$i = 1 \dots k$}{
 	Set $S_i$ to initial query from $A_i$
 }
@@ -108,7 +108,7 @@ Finally, learning from only membership queries and one positive example if fairl
 
 \begin{proposition}
 \label{memandpos}
-If $Q = \{\memQ\}$ and a single positive example $\vec{p} \in \targ$ is given, then $\targ$ is learnable in $k \cdot \sum \memCi{i}(c^*_i)$ membership queries. 
+If $Q = \{\memQ\}$ and a single positive example $\vec{p} \in \targ$ is given, then $\targ$ is learnable in $\sum \memCi{i}(c^*_i)$ membership queries.  \todo{Previously said $k \cdot \sum \memCi{i}(c^*_i)$ mem queries. This was a typo. right?}
 \end{proposition}
 \begin{proof}
 The algorithm learns by simulating each $A_i$ in sequence, moving on to $A_{i+1}$ once $A_i$ returns a hypothesis $c_i$. 
